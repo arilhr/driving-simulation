@@ -24,6 +24,22 @@ public class SpeedLimiter : MonoBehaviour, IObstacle
     [SerializeField]
     private float _maxSpeed = 80f;
 
+    [BoxGroup("Maximum Limit")]
+    [SerializeField]
+    private GameEventBool _setActiveMaxLimitCallback = null;
+
+    [BoxGroup("Maximum Limit")]
+    [SerializeField]
+    private GameEventBool _onActiveMaxLimiter = null;
+
+    [BoxGroup("Maximum Limit")]
+    [SerializeField]
+    private GameEventFloat _changedMaxSpeedCallback = null;
+
+    [BoxGroup("Maximum Limit")]
+    [SerializeField]
+    private GameEventFloat _onChangedMaxSpeedLimit = null;
+
     [BoxGroup("Minimum Limit")]
     [SerializeField]
     private bool _isMinActive = false;
@@ -31,6 +47,22 @@ public class SpeedLimiter : MonoBehaviour, IObstacle
     [BoxGroup("Minimum Limit")]
     [SerializeField]
     private float _minSpeed = 30f;
+
+    [BoxGroup("Minimum Limit")]
+    [SerializeField]
+    private GameEventBool _setActiveMinLimitCallback = null;
+
+    [BoxGroup("Minimum Limit")]
+    [SerializeField]
+    private GameEventBool _onActiveMinLimiter = null;
+
+    [BoxGroup("Minimum Limit")]
+    [SerializeField]
+    private GameEventFloat _changedMinSpeedCallback = null;
+
+    [BoxGroup("Minimum Limit")]
+    [SerializeField]
+    private GameEventFloat _onChangedMinSpeedLimit = null;
 
     [BoxGroup("Events")]
     [SerializeField]
@@ -54,11 +86,59 @@ public class SpeedLimiter : MonoBehaviour, IObstacle
 
     #endregion
 
+    #region Properties
+
+    public bool IsMaxActive
+    {
+        get { return _isMaxActive; }
+        private set
+        {
+            _isMaxActive = value;
+            _onActiveMaxLimiter.Invoke(value);
+        }
+    }
+
+    public float MaxSpeed
+    {
+        get { return _maxSpeed; }
+        private set
+        {
+            _maxSpeed = value;
+            _onChangedMaxSpeedLimit.Invoke(value);
+        }
+    }
+
+    public bool IsMinActive
+    {
+        get { return _isMinActive; }
+        private set
+        {
+            _isMinActive = value;
+            _onActiveMinLimiter.Invoke(value);
+        }
+    }
+
+    public float MinSpeed
+    {
+        get { return _minSpeed; }
+        private set
+        {
+            _minSpeed = value;
+            _onChangedMinSpeedLimit.Invoke(value);
+        }
+    }
+
+    #endregion
+
     #region Mono
 
     private void Awake()
     {
-        _onCheckSpeed?.AddListener(OnCheckSpeed);
+        _onCheckSpeed.AddListener(OnCheckSpeed);
+        _setActiveMaxLimitCallback.AddListener(SetActiveMaxSpeed);
+        _setActiveMinLimitCallback.AddListener(SetActiveMinSpeed);
+        _changedMaxSpeedCallback.AddListener(SetMaxSpeed);
+        _changedMinSpeedCallback.AddListener(SetMinSpeed);
     }
 
     private void Update()
@@ -68,7 +148,11 @@ public class SpeedLimiter : MonoBehaviour, IObstacle
 
     private void OnDestroy()
     {
-        _onCheckSpeed?.RemoveListener(OnCheckSpeed);
+        _onCheckSpeed.RemoveListener(OnCheckSpeed);
+        _setActiveMaxLimitCallback.RemoveListener(SetActiveMaxSpeed);
+        _setActiveMinLimitCallback.RemoveListener(SetActiveMinSpeed);
+        _changedMaxSpeedCallback.RemoveListener(SetMaxSpeed);
+        _changedMinSpeedCallback.RemoveListener(SetMinSpeed);
     }
 
     #endregion
@@ -111,6 +195,26 @@ public class SpeedLimiter : MonoBehaviour, IObstacle
         {
             OnViolate();
         }
+    }
+
+    private void SetActiveMaxSpeed(bool active)
+    {
+        IsMaxActive = active;
+    }
+
+    private void SetActiveMinSpeed(bool active)
+    {
+        IsMinActive = active;
+    }
+
+    private void SetMaxSpeed(float speed)
+    {
+        MaxSpeed = speed;
+    }
+
+    private void SetMinSpeed(float speed)
+    {
+        MinSpeed = speed;
     }
 
     #endregion
