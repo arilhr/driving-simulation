@@ -1,8 +1,7 @@
 using Sirenix.OdinInspector;
+using SOGameEvents;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace DrivingSimulation
@@ -196,21 +195,28 @@ namespace DrivingSimulation
 
         [BoxGroup("Vehicle Torque")]
         [Tooltip("In this class you can configure the vehicle torque, number of gears and their respective torques.")]
-        public TorqueAdjustment _vehicleTorque;
+        [SerializeField]
+        private TorqueAdjustment _vehicleTorque;
 
         [BoxGroup("Vehicle Adjusment")]
         [Tooltip("In this class you can adjust various settings that allow changing the way the vehicle is controlled, as well as the initial state of some variables, such as the engine and the brake.")]
-        public VehicleAdjustment _vehicleSettings;
+        [SerializeField]
+        private VehicleAdjustment _vehicleSettings;
 
         [BoxGroup("Vehicle Skid Marks")]
         [Tooltip("In this class, you can adjust all preferences in relation to vehicle skid marks, such as color, width, among other options.")]
-        public VehicleSkidMarks _skidMarks;
+        [SerializeField]
+        private VehicleSkidMarks _skidMarks;
+
+        [BoxGroup("Events")]
+        [SerializeField]
+        private GameEventFloat _onUpdateSpeed = null;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         public float KMh;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
-        public int currentGear;
+        public int CurrentGear;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         public bool disableVehicle = false;
@@ -344,14 +350,16 @@ namespace DrivingSimulation
         private float _tempAlphaSkidMarks;
         private WheelHit _tempWheelHit;
 
-        private float _verticalInput;
-        private float _horizontalInput;
+        private float _verticalInput = 0f;
+        private float _horizontalInput = 0f;
+        private bool _brakeInput = false;
 
         #endregion
 
         #region References
 
         private Rigidbody _rigidbody;
+        private CarInput _carInput;
 
         #endregion
 
@@ -359,8 +367,15 @@ namespace DrivingSimulation
 
         private void Awake()
         {
+            _carInput = new CarInput();
+
             _rigidbody = GetComponent<Rigidbody>();
             _theEngineIsRunning = true;
+        }
+
+        private void OnEnable()
+        {
+            _carInput.Enable();
         }
 
         private void Start()
@@ -375,6 +390,8 @@ namespace DrivingSimulation
             GetWheelsIsGrounded();
 
             KMh = _rigidbody.velocity.magnitude * 3.6f;
+            _onUpdateSpeed.Invoke(KMh);
+
             _inclinationFactorForcesDown = Mathf.Clamp(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)), _vehicleSettings._aerodynamics.downForceAngleFactor, 1.0f);
 
             if (_wheelFrontRightIsGrounded || _wheelFrontLeftIsGrounded || _wheelRearRightIsGrounded || _wheelRearLeftIsGrounded)
@@ -406,7 +423,6 @@ namespace DrivingSimulation
             StabilizeAirRotation();
             StabilizeAngularRotation();
 
-            //extra gravity
             if (_vehicleSettings._aerodynamics.extraGravity)
             {
                 _gravityValueFixedUpdate = 0;
@@ -422,28 +438,24 @@ namespace DrivingSimulation
                 _rigidbody.AddForce(Vector3.down * _additionalCurrentGravity);
             }
 
-            //forcaparaBaixo
             _downForceValueFixedUpdate = _vehicleSettings.improveControl.downForce * (((KMh / 10.0f) + 0.3f) / 2.5f);
             _currentDownForceVehicle = Mathf.Clamp(Mathf.Lerp(_currentDownForceVehicle, _downForceValueFixedUpdate, Time.deltaTime * 2.0f), 0.1f, 4.0f);
 
-            //forcaparaBaixo2
             _rigidbody.AddForce(-transform.up * _downForceUpdateRef);
 
-            //tire slips
             SetWheelForces(_wheels.rightFrontWheel.wheelCollider);
             SetWheelForces(_wheels.leftFrontWheel.wheelCollider);
             SetWheelForces(_wheels.rightRearWheel.wheelCollider);
             SetWheelForces(_wheels.leftRearWheel.wheelCollider);
 
-            //brakes ABS
             if (_wheelFrontRightIsGrounded && _wheelFrontLeftIsGrounded && _wheelRearLeftIsGrounded && _wheelRearRightIsGrounded)
             {
                 _absSpeedFactor = Mathf.Clamp(KMh, 70, 150);
-                if (currentGear > 0 && _mediumRPM > 0)
+                if (CurrentGear > 0 && _mediumRPM > 0)
                 {
                     _absBrakeInput = Mathf.Abs(Mathf.Clamp(_verticalInput, -1.0f, 0.0f));
                 }
-                else if (currentGear <= 0 && _mediumRPM < 0)
+                else if (CurrentGear <= 0 && _mediumRPM < 0)
                 {
                     _absBrakeInput = Mathf.Abs(Mathf.Clamp(_verticalInput, 0.0f, 1.0f)) * -1;
                 }
@@ -468,6 +480,10 @@ namespace DrivingSimulation
             _colliding = false;
         }
 
+        private void OnDisable()
+        {
+            _carInput.Disable();
+        }
 
         #endregion
 
@@ -571,8 +587,10 @@ namespace DrivingSimulation
 
         void UpdateInput()
         {
-            _verticalInput = Input.GetAxis("Vertical");
-            _horizontalInput = Input.GetAxis("Horizontal");
+            _verticalInput = _carInput.Controller.Run.ReadValue<float>();
+            _horizontalInput = _carInput.Controller.Turn.ReadValue<float>();
+
+            _brakeInput = _carInput.Controller.Brake.IsPressed();
         }
 
         #region Wheel Manager
@@ -621,8 +639,6 @@ namespace DrivingSimulation
                 }
                 _rigidbody.AddForceAtPosition(_forwardForceTemp, _tempWheelHit.point);
                 _rigidbody.AddForceAtPosition(_lateralForceTemp, _lateralForcePointTemp);
-
-                // Debug.Log($"[DEBUG] Set wheel velocity: {_forwardForceTemp} | {_lateralForceTemp}");
             }
         }
 
@@ -772,9 +788,9 @@ namespace DrivingSimulation
 
         void StabilizeWheelRPM()
         {
-            if (currentGear > 0)
+            if (CurrentGear > 0)
             {
-                if (KMh > (_vehicleTorque.maxVelocityGears[currentGear - 1] * _vehicleTorque.speedOfGear) && Mathf.Abs(_verticalInput) < 0.5f)
+                if (KMh > (_vehicleTorque.maxVelocityGears[CurrentGear - 1] * _vehicleTorque.speedOfGear) && Mathf.Abs(_verticalInput) < 0.5f)
                 {
                     if (_wheels.rightFrontWheel.wheelDrive)
                     {
@@ -794,7 +810,7 @@ namespace DrivingSimulation
                     }
                 }
             }
-            else if (currentGear == -1)
+            else if (CurrentGear == -1)
             {
                 if (KMh > (_vehicleTorque.maxVelocityGears[0] * _vehicleTorque.speedOfGear) && Mathf.Abs(_verticalInput) < 0.5f)
                 {
@@ -824,8 +840,7 @@ namespace DrivingSimulation
             _rightFrontForce = 1.0f;
             _leftRearForce = 1.0f;
             _rightRearForce = 1.0f;
-            //CHECAR COLISOES
-            //rodasTraz
+            
             bool isGround1 = _wheels.leftRearWheel.wheelCollider.GetGroundHit(out _tempWheelHit);
             if (isGround1)
             {
@@ -836,7 +851,7 @@ namespace DrivingSimulation
             {
                 _rightRearForce = (-_wheels.rightRearWheel.wheelCollider.transform.InverseTransformPoint(_tempWheelHit.point).y - _wheels.rightRearWheel.wheelCollider.radius) / _wheels.rightRearWheel.wheelCollider.suspensionDistance;
             }
-            //rodasFrente
+            
             bool isGround3 = _wheels.leftFrontWheel.wheelCollider.GetGroundHit(out _tempWheelHit);
             if (isGround3)
             {
@@ -848,10 +863,9 @@ namespace DrivingSimulation
                 _rightFrontForce = (-_wheels.rightFrontWheel.wheelCollider.transform.InverseTransformPoint(_tempWheelHit.point).y - _wheels.rightFrontWheel.wheelCollider.radius) / _wheels.rightFrontWheel.wheelCollider.suspensionDistance;
             }
 
-            //APLICAR FORCAS DESCOBERTAS
             _roolForce1 = (_leftRearForce - _rightRearForce) * _vehicleSettings._aerodynamics.feelingHeavy * _vehicleSettings.vehicleMass * _inclinationFactorForcesDown;
             _roolForce2 = (_leftFrontForce - _rightFrontForce) * _vehicleSettings._aerodynamics.feelingHeavy * _vehicleSettings.vehicleMass * _inclinationFactorForcesDown;
-            //rodasTraz
+            
             if (isGround1)
             {
                 _rigidbody.AddForceAtPosition(_wheels.leftRearWheel.wheelCollider.transform.up * -_roolForce1, _wheels.leftRearWheel.wheelCollider.transform.position);
@@ -860,7 +874,7 @@ namespace DrivingSimulation
             {
                 _rigidbody.AddForceAtPosition(_wheels.rightRearWheel.wheelCollider.transform.up * _roolForce1, _wheels.rightRearWheel.wheelCollider.transform.position);
             }
-            //rodasFrente
+            
             if (isGround3)
             {
                 _rigidbody.AddForceAtPosition(_wheels.leftFrontWheel.wheelCollider.transform.up * -_roolForce2, _wheels.leftFrontWheel.wheelCollider.transform.position);
@@ -888,52 +902,66 @@ namespace DrivingSimulation
         }
 
         void AutomaticGears()
-        {//aqui
-            if (currentGear == 0)
-            {//entre -5 e 5 RPM, se a marcha estver em 0
+        {
+            if (CurrentGear == 0)
+            {
                 if (_mediumRPM < 5 && _mediumRPM >= 0)
                 {
-                    currentGear = 1;
+                    CurrentGear = 1;
                 }
                 if (_mediumRPM > -5 && _mediumRPM < 0)
                 {
-                    currentGear = -1;
+                    CurrentGear = -1;
                 }
             }
             if (_mediumRPM < -0.1f && Mathf.Abs(_verticalInput) < 0.1f)
             {
-                currentGear = -1;
+                CurrentGear = -1;
             }
-            if (Mathf.Abs(_verticalInput) < 0.1f && _mediumRPM >= 0 && currentGear < 2)
+            if (Mathf.Abs(_verticalInput) < 0.1f && _mediumRPM >= 0 && CurrentGear < 2)
             {
-                currentGear = 1;
+                CurrentGear = 1;
             }
 
-            //
-            if (currentGear > 0)
+            if ((Mathf.Abs(Mathf.Clamp(_verticalInput, -1f, 0f))) > 0.2f)
             {
-                if (KMh > (_vehicleTorque.idealVelocityGears[currentGear - 1] * _vehicleTorque.speedOfGear + 7 * _vehicleTorque.speedOfGear))
+                if ((KMh < 5) || _mediumRPM < -2)
                 {
-                    if (currentGear < _vehicleTorque.numberOfGears && !_changinGearsAuto && currentGear != -1)
+                    CurrentGear = -1;
+                }
+            }
+            if ((Mathf.Abs(Mathf.Clamp(_verticalInput, 0f, 1f))) > 0.2f)
+            {
+                if ((KMh < 5) || (_mediumRPM > 2 && CurrentGear < 2))
+                {
+                    CurrentGear = 1;
+                }
+            }
+
+            if (CurrentGear > 0)
+            {
+                if (KMh > (_vehicleTorque.idealVelocityGears[CurrentGear - 1] * _vehicleTorque.speedOfGear + 7 * _vehicleTorque.speedOfGear))
+                {
+                    if (CurrentGear < _vehicleTorque.numberOfGears && !_changinGearsAuto && CurrentGear != -1)
                     {
                         _timeAutoGear = 1.5f;
-                        StartCoroutine("TimeAutoGears", currentGear + 1);
+                        StartCoroutine("TimeAutoGears", CurrentGear + 1);
                     }
                 }
-                else if (KMh < (_vehicleTorque.idealVelocityGears[currentGear - 1] * _vehicleTorque.speedOfGear - 15 * _vehicleTorque.speedOfGear))
+                else if (KMh < (_vehicleTorque.idealVelocityGears[CurrentGear - 1] * _vehicleTorque.speedOfGear - 15 * _vehicleTorque.speedOfGear))
                 {
-                    if (currentGear > 1 && !_changinGearsAuto)
+                    if (CurrentGear > 1 && !_changinGearsAuto)
                     {
                         _timeAutoGear = 0;
-                        StartCoroutine("TimeAutoGears", currentGear - 1);
+                        StartCoroutine("TimeAutoGears", CurrentGear - 1);
                     }
                 }
-                if (_verticalInput > 0.1f && KMh > (_vehicleTorque.idealVelocityGears[currentGear - 1] * _vehicleTorque.speedOfGear + 7 * _vehicleTorque.speedOfGear))
+                if (_verticalInput > 0.1f && KMh > (_vehicleTorque.idealVelocityGears[CurrentGear - 1] * _vehicleTorque.speedOfGear + 7 * _vehicleTorque.speedOfGear))
                 {
-                    if (currentGear < _vehicleTorque.numberOfGears && currentGear != -1)
+                    if (CurrentGear < _vehicleTorque.numberOfGears && CurrentGear != -1)
                     {
                         _timeAutoGear = 0.0f;
-                        StartCoroutine("TimeAutoGears", currentGear + 1);
+                        StartCoroutine("TimeAutoGears", CurrentGear + 1);
                     }
                 }
             }
@@ -943,7 +971,7 @@ namespace DrivingSimulation
         {
             _changinGearsAuto = true;
             yield return new WaitForSeconds(0.4f);
-            currentGear = gear;
+            CurrentGear = gear;
             yield return new WaitForSeconds(_timeAutoGear);
             _changinGearsAuto = false;
         }
@@ -995,47 +1023,45 @@ namespace DrivingSimulation
                 return 0;
             }
 
-            if (Input.GetKey(KeyCode.Space))
+            if (_brakeInput)
             {
                 return 0;
             }
 
-            if (currentGear < 0)
+            if (CurrentGear < 0)
             {
                 _clampInputTorque = Mathf.Abs(Mathf.Clamp(_verticalInput, -1f, 0f));
                 _torqueM = (500.0f * _vehicleTorque.engineTorque) * _clampInputTorque * (_vehicleTorque.gears[0].Evaluate((KMh / _vehicleTorque.speedOfGear))) * -0.8f;
             }
-            else if (currentGear == 0)
+            else if (CurrentGear == 0)
             {
                 return 0;
             }
             else
             {
-                _torqueM = (500.0f * _vehicleTorque.engineTorque) * (Mathf.Clamp(_engineInput, 0f, 1f)) * _vehicleTorque.gears[currentGear - 1].Evaluate((KMh / _vehicleTorque.speedOfGear));
+                _torqueM = (500.0f * _vehicleTorque.engineTorque) * (Mathf.Clamp(_engineInput, 0f, 1f)) * _vehicleTorque.gears[CurrentGear - 1].Evaluate((KMh / _vehicleTorque.speedOfGear));
             }
             
             _adjustTorque = 1;
-            if (currentGear < _vehicleTorque.manualAdjustmentOfTorques.Length && currentGear > 0)
+            if (CurrentGear < _vehicleTorque.manualAdjustmentOfTorques.Length && CurrentGear > 0)
             {
-                if (currentGear == -1)
+                if (CurrentGear == -1)
                 {
                     _adjustTorque = _vehicleTorque.manualAdjustmentOfTorques[0];
                 }
-                else if (currentGear == 0)
+                else if (CurrentGear == 0)
                 {
                     _adjustTorque = 0;
                 }
-                else if (currentGear > 0)
+                else if (CurrentGear > 0)
                 {
-                    _adjustTorque = _vehicleTorque.manualAdjustmentOfTorques[currentGear - 1];
+                    _adjustTorque = _vehicleTorque.manualAdjustmentOfTorques[CurrentGear - 1];
                 }
             }
             else
             {
                 _adjustTorque = 1;
             }
-
-            Debug.Log($"[DEBUG] Torque: {_torqueM} | {_adjustTorque} | {_vehicleScale}");
 
             return _torqueM * _adjustTorque * _vehicleScale;
         }
@@ -1096,16 +1122,16 @@ namespace DrivingSimulation
             {
                 _brakeVerticalInput = _verticalInput;
             }
-            //Freio de pé
-            if (currentGear > 0)
+
+            if (CurrentGear > 0)
             {
                 _currentBrakeValue = Mathf.Abs(Mathf.Clamp(_brakeVerticalInput, -1.0f, 0.0f)) * 1.5f;
             }
-            else if (currentGear < 0)
+            else if (CurrentGear < 0)
             {
                 _currentBrakeValue = Mathf.Abs(Mathf.Clamp(_brakeVerticalInput, 0.0f, 1.0f)) * 1.5f;
             }
-            else if (currentGear == 0)
+            else if (CurrentGear == 0)
             {
                 if (_mediumRPM > 0)
                 {
@@ -1117,7 +1143,6 @@ namespace DrivingSimulation
                 }
             }
 
-            // FREIO DE MÃO
             _handBrake_Input = 0.0f;
             if (handBrakeTrue)
             {
@@ -1135,12 +1160,13 @@ namespace DrivingSimulation
             {
                 _handBrake_Input = 0;
             }
-            if (Input.GetKey(KeyCode.Space))
+
+            if (_brakeInput)
             {
                 _handBrake_Input = 2;
             }
+
             _handBrake_Input = _handBrake_Input * 1000;
-            //FREIO TOTAL
             _totalFootBrake = _currentBrakeValue * 0.5f * _vehicleSettings.vehicleMass;
             _totalHandBrake = _handBrake_Input * 0.5f * _vehicleSettings.vehicleMass;
 
@@ -1161,7 +1187,6 @@ namespace DrivingSimulation
                 _brakingAuto = false;
             }
 
-            //freiar\/
             if (_totalFootBrake > 10)
             {
                 _isBraking = true;
@@ -1195,7 +1220,7 @@ namespace DrivingSimulation
             {
                 wheelCollider.brakeTorque = _totalFootBrake;
             }
-            //evitar RPM, freio ou torques invalidos, EvitarRotacaoSemTorque
+
             if (!wheelCollider.isGrounded && Mathf.Abs(wheelCollider.rpm) > 0.5f && Mathf.Abs(_verticalInput) < 0.05f && wheelCollider.motorTorque < 5.0f)
             {
                 wheelCollider.brakeTorque += _vehicleSettings.vehicleMass * Time.deltaTime * 50;
@@ -1220,7 +1245,6 @@ namespace DrivingSimulation
             _maxAngleVolant = 27.0f * _vehicleSettings.angle_x_Velocity.Evaluate(KMh);
             _angleRefVolant = Mathf.Clamp(_angle1Ref * _maxAngleVolant, -_maxAngleVolant, _maxAngleVolant);
 
-            //APLICAR ANGULO NAS RODAS--------------------------------------------------------------------------------------------------------------
             if (_angle1Ref > 0.2f)
             {
                 if (_wheels.rightFrontWheel.wheelTurn)
