@@ -1118,10 +1118,8 @@ namespace DrivingSimulation
         void Brakes()
         {
             _brakeVerticalInput = 0.0f;
-            if (isInsideTheCar)
-            {
-                _brakeVerticalInput = _verticalInput;
-            }
+
+            _brakeVerticalInput = _verticalInput;
 
             if (CurrentGear > 0)
             {

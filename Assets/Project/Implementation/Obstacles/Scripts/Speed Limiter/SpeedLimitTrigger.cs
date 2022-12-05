@@ -51,16 +51,18 @@ namespace DrivingSimulation
 
         private void OnTriggerEnter(Collider other)
         {
-            Vector3 toTarget = (other.transform.position - transform.position).normalized;
+            Vector3 toTarget = (other.transform.root.position - transform.position).normalized;
 
-            SetActiveLimit(!(Vector3.Dot(toTarget, transform.position) > 0) && !_isReverse);
+            SetActiveLimit((Vector3.Dot(toTarget, transform.position) > 0) && !_isReverse);
         }
 
         private void OnTriggerExit(Collider other)
         {
-            Vector3 toTarget = (other.transform.position - transform.position).normalized;
+            Vector3 toTarget = (other.transform.root.position - transform.position).normalized;
 
-            SetActiveLimit(!(Vector3.Dot(toTarget, transform.position) > 0) && !_isReverse);
+            Debug.Log($"{(Vector3.Dot(toTarget, transform.position))}");
+
+            SetActiveLimit((Vector3.Dot(toTarget, transform.position) > 0) && !_isReverse);
         }
 
         private void OnDrawGizmos()
