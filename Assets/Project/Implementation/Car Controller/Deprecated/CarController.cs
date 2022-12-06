@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace DrivingSimulation
 {
     public class CarController : MonoBehaviour
     {
-        public const string HORIZONTAL_INPUT = "Horizontal";
-        public const string VERTICAL_INPUT = "Vertical";
+        public CarInput _input = null;
 
         [Header("Properties")]
         [SerializeField] private float _motorForce = 1f;
@@ -31,6 +29,21 @@ namespace DrivingSimulation
         private float _currentBrakeForce = 0f;
         private bool _isBraking = false;
 
+        private void Awake()
+        {
+            _input = new CarInput();
+            _input.Controller.Brake.started += (ctx) => { _isBraking = true; };
+            _input.Controller.Brake.canceled += (ctx) => { _isBraking = false; };
+
+            _input.Enable();
+        }
+
+        private void OnDestroy()
+        {
+            _input.Controller.Brake.Dispose();
+            _input.Disable();
+        }
+
         private void Update()
         {
             GetInput();
@@ -45,8 +58,7 @@ namespace DrivingSimulation
 
         private void GetInput()
         {
-            _inputDirection = new Vector2(Input.GetAxis(HORIZONTAL_INPUT), Input.GetAxis(VERTICAL_INPUT));
-            _isBraking = Input.GetKey(KeyCode.Space);
+            _inputDirection = new Vector2(_input.Controller.Turn.ReadValue<float>(), _input.Controller.Run.ReadValue<float>());
         }
 
         private void HandleMotor()
