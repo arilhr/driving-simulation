@@ -15,8 +15,6 @@ namespace DrivingSimulation
 
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"Trigger {!((_playerLayer.value & (1 << other.gameObject.layer)) > 0)}");
-
             if (!((_playerLayer.value & (1 << other.gameObject.layer)) > 0)) return;
 
             _gameSuccessCallback?.Invoke();
