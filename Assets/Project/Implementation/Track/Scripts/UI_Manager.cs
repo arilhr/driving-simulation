@@ -2,6 +2,7 @@ using SOGameEvents;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace DrivingSimulation
 {
@@ -12,26 +13,55 @@ namespace DrivingSimulation
         [SerializeField]
         private GameObject _gamePanel;
         [SerializeField]
-        private GameObject _endPanel;
+        private GameObject _gameWinPanel;
+        [SerializeField]
+        private GameObject _gameLostPanel;
 
         [Header("Events")]
         [SerializeField]
-        private GameEventNoParam _gameSuccessCallback = null;
+        private GameEventNoParam _gameWinCallback = null;
+        [SerializeField]
+        private GameEventNoParam _gameLostCallback = null;
+        [SerializeField]
+        private GameEventNoParam _nextLevelCallback = null;
 
         private void Awake()
         {
-            _gameSuccessCallback.AddListener(GameSuccess);
+            _gameWinCallback.AddListener(GameWin);
+            _gameLostCallback.AddListener(GameLost);
         }
 
         private void OnDestroy()
         {
-            _gameSuccessCallback.RemoveListener(GameSuccess);
+            _gameWinCallback.RemoveListener(GameWin);
+            _gameLostCallback.RemoveListener(GameLost);
         }
 
-        private void GameSuccess()
+        private void GameWin()
         {
             _gamePanel.SetActive(false);
-            _endPanel.SetActive(true);
+            _gameWinPanel.SetActive(true);
+        }
+
+        private void GameLost()
+        {
+            _gamePanel.SetActive(false);
+            _gameLostPanel.SetActive(true);
+        }
+
+        public void NextLevel()
+        {
+            _nextLevelCallback.Invoke();
+        }
+
+        public void RetryLevel()
+        {
+            SceneManager.LoadScene(gameObject.scene.name);
+        }
+
+        public void BackMenu()
+        {
+            SceneManager.LoadScene("Main Menu");
         }
     }
 }

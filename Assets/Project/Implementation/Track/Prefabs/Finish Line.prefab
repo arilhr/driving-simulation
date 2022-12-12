@@ -355,4 +355,4 @@ MonoBehaviour:
   _playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  _gameSuccessCallback: {fileID: 11400000, guid: e86e02f2847f48e459fb514f0175ea55, type: 2}
+  _gameSuccessCallback: {fileID: 11400000, guid: 1657ac7ca70635d4cb111f0faaf591f6, type: 2}

@@ -208,12 +208,9 @@ namespace DrivingSimulation
         [SerializeField]
         private VehicleSkidMarks _skidMarks;
 
-        [BoxGroup("Events")]
-        [SerializeField]
-        private GameEventFloat _onUpdateSpeed = null;
-
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
-        public float KMh;
+        [SerializeField]
+        private float _kmh;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         public int CurrentGear;
@@ -226,6 +223,18 @@ namespace DrivingSimulation
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         public bool isInsideTheCar;
+
+        #endregion
+
+        #region Events
+
+        [BoxGroup("Events")]
+        [SerializeField]
+        private GameEventFloat _onKMhChanged = null;
+
+        [BoxGroup("Events")]
+        [SerializeField]
+        private GameEventBool _setInputActiveCallback = null;
 
         #endregion
 
@@ -350,6 +359,7 @@ namespace DrivingSimulation
         private float _tempAlphaSkidMarks;
         private WheelHit _tempWheelHit;
 
+        private bool _inputEnable = true;
         private float _verticalInput = 0f;
         private float _horizontalInput = 0f;
         private bool _brakeInput = false;
@@ -363,6 +373,20 @@ namespace DrivingSimulation
 
         #endregion
 
+        #region Properties
+
+        private float KMh
+        {
+            get { return _kmh; }
+            set
+            {
+                _kmh = value;
+                _onKMhChanged.Invoke(_kmh);
+            }
+        }
+
+        #endregion
+
         #region Mono
 
         private void Awake()
@@ -371,6 +395,15 @@ namespace DrivingSimulation
 
             _rigidbody = GetComponent<Rigidbody>();
             _theEngineIsRunning = true;
+
+            // Event Init
+            _setInputActiveCallback.AddListener(SetInputActive);
+        }
+
+        private void OnDestroy()
+        {
+            // Remove event listener
+            _setInputActiveCallback.RemoveListener(SetInputActive);
         }
 
         private void OnEnable()
@@ -390,7 +423,6 @@ namespace DrivingSimulation
             GetWheelsIsGrounded();
 
             KMh = _rigidbody.velocity.magnitude * 3.6f;
-            _onUpdateSpeed.Invoke(KMh);
 
             _inclinationFactorForcesDown = Mathf.Clamp(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)), _vehicleSettings._aerodynamics.downForceAngleFactor, 1.0f);
 
@@ -585,13 +617,31 @@ namespace DrivingSimulation
             }
         }
 
+        #region Input
+
         void UpdateInput()
         {
+            if (!_inputEnable) return;
+
             _verticalInput = _carInput.Controller.Run.ReadValue<float>();
             _horizontalInput = _carInput.Controller.Turn.ReadValue<float>();
 
             _brakeInput = _carInput.Controller.Brake.IsPressed();
         }
+
+        void SetInputActive(bool isActive)
+        {
+            _inputEnable = isActive;
+
+            if (!_inputEnable)
+            {
+                _verticalInput = 0f;
+                _horizontalInput = 0f;
+                _brakeInput = false;
+            }
+        }
+
+        #endregion
 
         #region Wheel Manager
 
