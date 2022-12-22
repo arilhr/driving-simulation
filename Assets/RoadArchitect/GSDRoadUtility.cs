@@ -4336,7 +4336,7 @@ namespace GSD.Roads{
 			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
 //			xDir = (GSDRI.CornerRR - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_RR(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,180f,0f);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
 			if(bIsRB){
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
@@ -4352,7 +4352,7 @@ namespace GSD.Roads{
 			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
 //			xDir = (GSDRI.CornerLL - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_LL(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,180f,0f);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
 			if(bIsRB){
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
@@ -4368,7 +4368,7 @@ namespace GSD.Roads{
 			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
 //			xDir = (GSDRI.CornerRL - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_RL(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,180f,0f);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
 			if(bIsRB){
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
@@ -4384,7 +4384,7 @@ namespace GSD.Roads{
 			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
 //			xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_LR(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,180f,0f);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
 			if(bIsRB){
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
