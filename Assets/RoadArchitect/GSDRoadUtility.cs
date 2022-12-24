@@ -1,4 +1,5 @@
 using UnityEngine;
+using DrivingSimulation;
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Collections;
@@ -4306,7 +4307,7 @@ namespace GSD.Roads{
 			CreateStopSignsAllWay_Do(ref MasterGameObj, bIsRB);
 		}
 		private static void CreateStopSignsAllWay_Do(ref GameObject MasterGameObj, bool bIsRB){
-			Object prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDSignStopAllway.prefab", typeof(GameObject));
+			Object prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDSignStop.prefab", typeof(GameObject));
 	
 			GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
 			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
@@ -4601,7 +4602,7 @@ namespace GSD.Roads{
 //				xDir = (GSDRI.CornerRR - GSDRI.transform.position).normalized;
 				tDir = TrafficLightBase_GetRot_RR(GSDRI,tSpline,DistFromCorner);
                 if (tDir == zeroVect) { tDir = new Vector3(0f, 0.0001f, 0f); }
-				tObjRR.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(-90f,-180f,0f);
+				tObjRR.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(-90f,180f,0f);
 				tObjRR.transform.parent = MasterGameObj.transform;
 				StartVec = tPosRR;
 				EndVec = (tDir.normalized*TLDistance) + StartVec;
@@ -4621,7 +4622,7 @@ namespace GSD.Roads{
 //			xDir = (GSDRI.CornerLL - GSDRI.transform.position).normalized;
 			tDir = TrafficLightBase_GetRot_LL(GSDRI,tSpline,DistFromCorner);
             if (tDir == zeroVect) { tDir = new Vector3(0f, 0.0001f, 0f); }
-			tObjLL.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(-90f,-180f,0f);
+			tObjLL.transform.rotation = Quaternion.LookRotation(tDir);
 			tObjLL.transform.parent = MasterGameObj.transform;
 			StartVec = tPosLL;
 			EndVec = (tDir.normalized*TLDistance) + StartVec;
@@ -4652,7 +4653,7 @@ namespace GSD.Roads{
 			}
 			tObjLL.transform.position = tPosLL;
 			tObjLL.transform.name = "TrafficLightLL";
-			
+
 			//Create the actual lights:
 			CreateTrafficLightMains(MasterGameObj,tObjRR,tObjRL,tObjLL,tObjLR);
 		}
@@ -4844,7 +4845,7 @@ namespace GSD.Roads{
 	
 		#region "Traffic light mains"
 		private static void CreateTrafficLightMains(GameObject MasterGameObj, GameObject tRR, GameObject tRL, GameObject tLL, GameObject tLR){
-			GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
+            GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
 			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
 			
 			float tDist = (Vector3.Distance(GSDRI.CornerRL,GSDRI.CornerRR) / 2f) / tSpline.distance;
@@ -4889,7 +4890,7 @@ namespace GSD.Roads{
 		private static void ProcessPole(GameObject MasterGameObj, GameObject tObj, Vector3 tan, int tCorner, float InterDist){
 			GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
 			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
-//			bool bIsRB = true;
+			//			bool bIsRB = true;
 		
 //			float RoadWidth = tSpline.tRoad.RoadWidth();
 			float LaneWidth = tSpline.tRoad.opt_LaneWidth;
@@ -5032,10 +5033,22 @@ namespace GSD.Roads{
 			for(int i=0;i<LanesHalf;i++){
 				prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDTrafficLightMain.prefab", typeof(GameObject));
 				tLanes[i] = (GameObject)GameObject.Instantiate(prefab,Vector3.zero,Quaternion.identity);
-				tLanes[i].transform.position = tObj.transform.TransformPoint(tLanePos[i]);
-				tLanes[i].transform.rotation = Quaternion.LookRotation(tan) * Quaternion.Euler(0f,90f,0f);
+				tLanes[i].transform.position = tObj.transform.position;
+				tLanes[i].transform.rotation = Quaternion.LookRotation(tan) * Quaternion.Euler(0f,-90f,0f);
 				tLanes[i].transform.parent = tObj.transform;
-				tLanes[i].transform.name = "Light" + i.ToString();
+				tLanes[i].transform.localPosition += new Vector3(0f, InterDist / 4f, 7.6f);
+                tLanes[i].transform.name = "Light";
+
+				// Add Collider Traffic Checker
+				BoxCollider triggerCollider = tObj.AddComponent<BoxCollider>();
+				triggerCollider.isTrigger = true;
+				triggerCollider.size = new Vector3(1f, InterDist, 10f);
+				triggerCollider.center = new Vector3(0f, InterDist / 2f, 5f);
+
+				// Add Light Manager
+				TrafficLightManager trafficManager = tObj.AddComponent<TrafficLightManager>();
+				trafficManager.Initialize();
+
 				if(bScale){ tLanes[i].transform.localScale = tScale; }
 				
 				cCount = tLanes[i].transform.childCount;

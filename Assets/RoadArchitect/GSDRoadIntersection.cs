@@ -310,20 +310,110 @@ public class GSDRoadIntersection : MonoBehaviour{
 	}
 	
 	private void CreateFixedSequence(){
-		GSDTrafficLightSequence SMaker = null; FixedTimeSequenceList = new List<GSDTrafficLightSequence>();
-		if(rType != RoadTypeEnum.NoTurnLane){SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.LeftTurn,	GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_LeftTurnLightLength);		FixedTimeSequenceList.Add (SMaker); }
-		if(rType != RoadTypeEnum.NoTurnLane){SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.LeftTurn,	GSDTrafficLightController.iLightSubStatusEnum.Yellow,	opt_FixedTime_YellowLightLength);		FixedTimeSequenceList.Add (SMaker); }
-		SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.Red,			GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_AllRedLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.Regular,		GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_RegularLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.Regular,		GSDTrafficLightController.iLightSubStatusEnum.Yellow,	opt_FixedTime_YellowLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.Red,			GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_AllRedLightLength);		FixedTimeSequenceList.Add (SMaker);
+		GSDTrafficLightSequence SMaker = null; 
 		
-		if(rType != RoadTypeEnum.NoTurnLane){SMaker = new GSDTrafficLightSequence(false,	GSDTrafficLightController.iLightControllerEnum.LeftTurn,	GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_LeftTurnLightLength);		FixedTimeSequenceList.Add (SMaker); }
-		if(rType != RoadTypeEnum.NoTurnLane){SMaker = new GSDTrafficLightSequence(false,	GSDTrafficLightController.iLightControllerEnum.LeftTurn,	GSDTrafficLightController.iLightSubStatusEnum.Yellow,	opt_FixedTime_YellowLightLength);		FixedTimeSequenceList.Add (SMaker); }
-		SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.Red,			GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_AllRedLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(false,	GSDTrafficLightController.iLightControllerEnum.Regular,		GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_RegularLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(false,	GSDTrafficLightController.iLightControllerEnum.Regular,		GSDTrafficLightController.iLightSubStatusEnum.Yellow,	opt_FixedTime_YellowLightLength);		FixedTimeSequenceList.Add (SMaker);
-		SMaker = new GSDTrafficLightSequence(false,	GSDTrafficLightController.iLightControllerEnum.Red,			GSDTrafficLightController.iLightSubStatusEnum.Green,	opt_FixedTime_AllRedLightLength);		FixedTimeSequenceList.Add (SMaker);
+		FixedTimeSequenceList = new List<GSDTrafficLightSequence>();
+		if(rType != RoadTypeEnum.NoTurnLane)
+		{
+			SMaker = new GSDTrafficLightSequence(
+				true,	
+				GSDTrafficLightController.iLightControllerEnum.LeftTurn,	
+				GSDTrafficLightController.iLightSubStatusEnum.Green,	
+				opt_FixedTime_LeftTurnLightLength
+			);		
+			FixedTimeSequenceList.Add (SMaker); 
+		}
+
+		if(rType != RoadTypeEnum.NoTurnLane)
+		{
+			SMaker = new GSDTrafficLightSequence(true,	GSDTrafficLightController.iLightControllerEnum.LeftTurn,	GSDTrafficLightController.iLightSubStatusEnum.Yellow,	opt_FixedTime_YellowLightLength);		FixedTimeSequenceList.Add (SMaker); 
+		}
+
+		SMaker = new GSDTrafficLightSequence(
+			true,	
+			GSDTrafficLightController.iLightControllerEnum.Red,			
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_AllRedLightLength
+		);
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			true,	
+			GSDTrafficLightController.iLightControllerEnum.Regular,		
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_RegularLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			true,	
+			GSDTrafficLightController.iLightControllerEnum.Regular,		
+			GSDTrafficLightController.iLightSubStatusEnum.Yellow,	
+			opt_FixedTime_YellowLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			true,	
+			GSDTrafficLightController.iLightControllerEnum.Red,			
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_AllRedLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+		
+		if(rType != RoadTypeEnum.NoTurnLane)
+		{
+			SMaker = new GSDTrafficLightSequence(
+				false,	
+				GSDTrafficLightController.iLightControllerEnum.LeftTurn,	
+				GSDTrafficLightController.iLightSubStatusEnum.Green,	
+				opt_FixedTime_LeftTurnLightLength
+			);		
+			FixedTimeSequenceList.Add (SMaker); 
+		}
+
+		if(rType != RoadTypeEnum.NoTurnLane)
+		{
+			SMaker = new GSDTrafficLightSequence(
+				false,	
+				GSDTrafficLightController.iLightControllerEnum.LeftTurn,	
+				GSDTrafficLightController.iLightSubStatusEnum.Yellow,	
+				opt_FixedTime_YellowLightLength
+			);
+			FixedTimeSequenceList.Add (SMaker); 
+		}
+
+		SMaker = new GSDTrafficLightSequence(
+			true,	
+			GSDTrafficLightController.iLightControllerEnum.Red,			
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_AllRedLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			false,	
+			GSDTrafficLightController.iLightControllerEnum.Regular,		
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_RegularLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			false,	
+			GSDTrafficLightController.iLightControllerEnum.Regular,		
+			GSDTrafficLightController.iLightSubStatusEnum.Yellow,	
+			opt_FixedTime_YellowLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
+
+		SMaker = new GSDTrafficLightSequence(
+			false,	
+			GSDTrafficLightController.iLightControllerEnum.Red,			
+			GSDTrafficLightController.iLightSubStatusEnum.Green,	
+			opt_FixedTime_AllRedLightLength
+		);		
+		FixedTimeSequenceList.Add (SMaker);
 	}
 
 	private IEnumerator TrafficLightFixedUpdate(float tTime){
@@ -387,7 +477,7 @@ public class GSDRoadIntersection : MonoBehaviour{
 			Lights_outer2.UpdateLights(GSDTrafficLightController.iLightStatusEnum.Red,LCESub,bLightsEnabled);
 		}
 		
-//		Debug.Log ("Starting: " + SMaker.ToString());
+		Debug.Log ("Starting: " + SMaker.ToString());
 		StartCoroutine(TrafficLightFixedUpdate(SMaker.tTime));
 	}
 	#endregion
