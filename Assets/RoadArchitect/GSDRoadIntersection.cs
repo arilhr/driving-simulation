@@ -477,7 +477,6 @@ public class GSDRoadIntersection : MonoBehaviour{
 			Lights_outer2.UpdateLights(GSDTrafficLightController.iLightStatusEnum.Red,LCESub,bLightsEnabled);
 		}
 		
-		Debug.Log ("Starting: " + SMaker.ToString());
 		StartCoroutine(TrafficLightFixedUpdate(SMaker.tTime));
 	}
 	#endregion

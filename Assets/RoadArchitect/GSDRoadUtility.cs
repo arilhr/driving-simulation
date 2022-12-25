@@ -4331,22 +4331,23 @@ namespace GSD.Roads{
 			Vector3 tPosLR = default(Vector3);
 			Vector3 tPosLL = default(Vector3);
 			GetFourPoints(GSDRI, out tPosRR,out tPosRL,out tPosLL,out tPosLR,DistFromCorner);
-			
-			//RR:
-			tSpline = GSDRI.Node1.GSDSpline;
-			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
-//			xDir = (GSDRI.CornerRR - GSDRI.transform.position).normalized;
-			tDir = StopSign_GetRot_RR(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
-			if(bIsRB){
+
+			//LR:
+			tSpline = GSDRI.Node2.GSDSpline;
+			tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+			//			xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
+			tDir = StopSign_GetRot_LR(GSDRI, tSpline);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f, 90f, 0f);
+			if (bIsRB)
+			{
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f,-10f,0f);
+				RB.centerOfMass = new Vector3(0f, -10f, 0f);
 			}
 			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosRR;
-			tObj.name = "StopSignRR";
-			if(GSDRI.IgnoreCorner == 0){ Object.DestroyImmediate(tObj); }
+			tObj.transform.position = tPosLR;
+			tObj.name = "StopSignLR";
+			if (GSDRI.IgnoreCorner == 0){ Object.DestroyImmediate(tObj); }
 			
 			//LL:
 			tSpline = GSDRI.Node1.GSDSpline;
@@ -4379,21 +4380,22 @@ namespace GSD.Roads{
 			tObj.transform.position = tPosRL;
 			tObj.name = "StopSignRL";
 			if(GSDRI.IgnoreCorner == 1){ Object.DestroyImmediate(tObj); }
-			
-			//LR:
-			tSpline = GSDRI.Node2.GSDSpline;
-			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
-//			xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
-			tDir = StopSign_GetRot_LR(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
-			if(bIsRB){
+
+			//RR:
+			tSpline = GSDRI.Node1.GSDSpline;
+			tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+			//			xDir = (GSDRI.CornerRR - GSDRI.transform.position).normalized;
+			tDir = StopSign_GetRot_RR(GSDRI, tSpline);
+			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f, 90f, 0f);
+			if (bIsRB)
+			{
 				Rigidbody RB = tObj.AddComponent<Rigidbody>();
 				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f,-10f,0f);
+				RB.centerOfMass = new Vector3(0f, -10f, 0f);
 			}
 			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosLR;
-			tObj.name = "StopSignLR";
+			tObj.transform.position = tPosRR;
+			tObj.name = "StopSignRR";
 			if(GSDRI.IgnoreCorner == 3){ Object.DestroyImmediate(tObj); }
 		}
 		
@@ -4879,11 +4881,11 @@ namespace GSD.Roads{
 			if(GSDRI.IgnoreCorner == 0){
 				if(tRR != null){ Object.DestroyImmediate(tRR); }
 			}else if(GSDRI.IgnoreCorner == 1){
-				if(tRL != null){ Object.DestroyImmediate(tRL); }
+				if(tRL != null){ Object.DestroyImmediate(tLR); }
 			}else if(GSDRI.IgnoreCorner == 2){
 				if(tLL != null){ Object.DestroyImmediate(tLL); }
 			}else if(GSDRI.IgnoreCorner == 3){
-				if(tLR != null){ Object.DestroyImmediate(tLR); }
+				if(tLR != null){ Object.DestroyImmediate(tRL);  }
 			}
 		}
 		
@@ -5033,11 +5035,14 @@ namespace GSD.Roads{
 			for(int i=0;i<LanesHalf;i++){
 				prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDTrafficLightMain.prefab", typeof(GameObject));
 				tLanes[i] = (GameObject)GameObject.Instantiate(prefab,Vector3.zero,Quaternion.identity);
-				tLanes[i].transform.position = tObj.transform.position;
-				tLanes[i].transform.rotation = Quaternion.LookRotation(tan) * Quaternion.Euler(0f,-90f,0f);
+				tLanes[i].transform.name = "Light";
+				tLanes[i].transform.SetPositionAndRotation(tObj.transform.position, Quaternion.LookRotation(tan));
 				tLanes[i].transform.parent = tObj.transform;
+
+				// Set position and rotation
 				tLanes[i].transform.localPosition += new Vector3(0f, InterDist / 4f, 7.6f);
-                tLanes[i].transform.name = "Light";
+
+				tLanes[i].transform.Rotate(0f, -90f, 0f, Space.Self);
 
 				// Add Collider Traffic Checker
 				BoxCollider triggerCollider = tObj.AddComponent<BoxCollider>();

@@ -41,7 +41,7 @@ public class GSDRoad : MonoBehaviour{
 	public bool bUpdateSpline = false;
 
 	//Road editor options: 
-	public float	opt_LaneWidth = 5f;					//Done.
+	public float	opt_LaneWidth = 20f;				//Done.
 	public bool 	opt_bShouldersEnabled = true;		//Disabled for now. Comprimises integrity of roads.
 	public float 	opt_ShoulderWidth = 3f;				//Done.
 	public int 		opt_Lanes = 2;						//Done.
@@ -55,7 +55,7 @@ public class GSDRoad : MonoBehaviour{
 	public bool 	opt_UseDefaultMaterials = true;
 	public bool 	opt_AutoUpdateInEditor = true;
 	
-	public float 	opt_TerrainSubtract_Match = 0.01f;
+	public float 	opt_TerrainSubtract_Match = 0.1f;
 	public bool		opt_bGSDRoadRaise = false;
 	
 	public float 	opt_MatchHeightsDistance = 50f;
