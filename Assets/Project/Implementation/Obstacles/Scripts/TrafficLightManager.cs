@@ -69,7 +69,8 @@ namespace DrivingSimulation
                 LightType currentType = GetCurrentLight();
                 if (currentType == LightType.Red || currentType == LightType.Yellow)
                 {
-                    Debug.Log($"You passing the red light!");
+                    GlobalEvents.Instance.SetNotificationCallback.Invoke("You passing the red light!", (int)NotificationType.Danger);
+                    GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
                     if (GlobalEvents.Instance.AddPointCallback != null)
                         GlobalEvents.Instance.AddPointCallback.Invoke(-20);

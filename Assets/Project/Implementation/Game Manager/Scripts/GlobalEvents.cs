@@ -9,8 +9,12 @@ namespace DrivingSimulation
     {
         public static GlobalEvents Instance = null;
 
-        [Header("Global Game Events")]
+        [Header("Point Manager Events")]
         public GameEventInt AddPointCallback = null;
+
+        [Header("Notification UI Events")]
+        public GameEventStringInt SetNotificationCallback = null;
+        public GameEventThreeFloat StartNoticationCallback = null;
 
         private void Awake()
         {
