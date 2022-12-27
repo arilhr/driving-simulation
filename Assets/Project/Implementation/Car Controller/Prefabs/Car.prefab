@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 20}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &512373499
 Canvas:
@@ -1129,6 +1129,7 @@ GameObject:
   - component: {fileID: 4305744416550480594}
   - component: {fileID: 4305744416550480596}
   - component: {fileID: 4305744416550480599}
+  - component: {fileID: 1539519015}
   m_Layer: 6
   m_Name: Car
   m_TagString: Untagged
@@ -1690,12 +1691,25 @@ MonoBehaviour:
     standardBrandWidth: 0.3
     sensibility: 2
     standardColor: {r: 0.15, g: 0.15, b: 0.15, a: 0}
-  _onUpdateSpeed: {fileID: 11400000, guid: 7cc0ca0775836864a92072b59a4e7cbc, type: 2}
-  KMh: 0
+  _kmh: 0
   CurrentGear: 0
   disableVehicle: 0
   handBrakeTrue: 0
   isInsideTheCar: 0
+  _onKMhChanged: {fileID: 11400000, guid: 7cc0ca0775836864a92072b59a4e7cbc, type: 2}
+  _setInputActiveCallback: {fileID: 11400000, guid: d2796ab8384344d43b57614cd211e687, type: 2}
+--- !u!114 &1539519015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244a038c53f10c644acb49c637910f3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4305744416819254936
 GameObject:
   m_ObjectHideFlags: 0
