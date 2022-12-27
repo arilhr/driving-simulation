@@ -69,13 +69,33 @@ namespace DrivingSimulation
                 LightType currentType = GetCurrentLight();
                 if (currentType == LightType.Red || currentType == LightType.Yellow)
                 {
-                    GlobalEvents.Instance.SetNotificationCallback.Invoke("You passing the red light!", (int)NotificationType.Danger);
-                    GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                    Failed();
+                    return;
+                }
 
-                    if (GlobalEvents.Instance.AddPointCallback != null)
-                        GlobalEvents.Instance.AddPointCallback.Invoke(-20);
+                if (currentType == LightType.Green)
+                {
+                    Success();
                 }
             }
+        }
+
+        private void Success()
+        {
+            GlobalEvents.Instance.SetNotificationCallback.Invoke("Green Light Crossing!", (int)NotificationType.Success);
+            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+
+            if (GlobalEvents.Instance.AddPointCallback != null)
+                GlobalEvents.Instance.AddPointCallback.Invoke(20);
+        }
+
+        private void Failed()
+        {
+            GlobalEvents.Instance.SetNotificationCallback.Invoke("You crossing the red light!", (int)NotificationType.Danger);
+            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+
+            if (GlobalEvents.Instance.AddPointCallback != null)
+                GlobalEvents.Instance.AddPointCallback.Invoke(-20);
         }
 
         private void OnDrawGizmos()

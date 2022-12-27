@@ -4313,16 +4313,16 @@ namespace GSD.Roads{
 			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
 			
 			GameObject tObj = null;
-//			Vector3 xDir = default(Vector3);
-			Vector3 tDir = default(Vector3);
-//			float RoadWidth = tSpline.tRoad.RoadWidth();
-//			float LaneWidth = tSpline.tRoad.opt_LaneWidth;
-			float ShoulderWidth = tSpline.tRoad.opt_ShoulderWidth;
-			
+            Vector3 xDir = default(Vector3);
+            Vector3 tDir = default(Vector3);
+            float LaneWidth = tSpline.tRoad.opt_LaneWidth;
+            float ShoulderWidth = tSpline.tRoad.opt_ShoulderWidth;
+
+			int Lanes = tSpline.tRoad.opt_Lanes;
+			int LanesHalf = Lanes / 2;
+
 			//Cleanup:
 			CleanupIntersectionObjects(MasterGameObj);
-			
-			float Mass = 100f;
 			
 			//Get four points:
 			float DistFromCorner = (ShoulderWidth*0.45f);
@@ -4332,71 +4332,65 @@ namespace GSD.Roads{
 			Vector3 tPosLL = default(Vector3);
 			GetFourPoints(GSDRI, out tPosRR,out tPosRL,out tPosLL,out tPosLR,DistFromCorner);
 
+			float InterDist = Vector3.Distance(GSDRI.CornerRL, GSDRI.CornerLL);
+			float realDistLane = InterDist - (ShoulderWidth) * 4f;
+
 			//LR:
 			tSpline = GSDRI.Node2.GSDSpline;
-			tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-			//			xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_LR(GSDRI, tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f, 90f, 0f);
-			if (bIsRB)
-			{
-				Rigidbody RB = tObj.AddComponent<Rigidbody>();
-				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f, -10f, 0f);
-			}
-			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosLR;
-			tObj.name = "StopSignLR";
+
+			tObj = GenerateStopSign("StopSignLR", tPosLR, tDir, realDistLane, MasterGameObj.transform);
+
 			if (GSDRI.IgnoreCorner == 0){ Object.DestroyImmediate(tObj); }
 			
 			//LL:
 			tSpline = GSDRI.Node1.GSDSpline;
-			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
-//			xDir = (GSDRI.CornerLL - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_LL(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
-			if(bIsRB){
-				Rigidbody RB = tObj.AddComponent<Rigidbody>();
-				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f,-10f,0f);
-			}
-			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosLL;
-			tObj.name = "StopSignLL";
-			if(GSDRI.IgnoreCorner == 2){ Object.DestroyImmediate(tObj); }
+			tObj = GenerateStopSign("StopSignLL", tPosLL, tDir, realDistLane, MasterGameObj.transform);
+			//xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
+
+			if (GSDRI.IgnoreCorner == 2){ Object.DestroyImmediate(tObj); }
 			
 			//RL:
 			tSpline = GSDRI.Node2.GSDSpline;
-			tObj = Object.Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
-//			xDir = (GSDRI.CornerRL - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_RL(GSDRI,tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f,90f,0f);
-			if(bIsRB){
-				Rigidbody RB = tObj.AddComponent<Rigidbody>();
-				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f,-10f,0f);
-			}
-			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosRL;
-			tObj.name = "StopSignRL";
-			if(GSDRI.IgnoreCorner == 1){ Object.DestroyImmediate(tObj); }
+
+			tObj = GenerateStopSign("StopSignRL", tPosRL, tDir, realDistLane, MasterGameObj.transform);
+
+			if (GSDRI.IgnoreCorner == 1){ Object.DestroyImmediate(tObj); }
 
 			//RR:
 			tSpline = GSDRI.Node1.GSDSpline;
-			tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-			//			xDir = (GSDRI.CornerRR - GSDRI.transform.position).normalized;
 			tDir = StopSign_GetRot_RR(GSDRI, tSpline);
-			tObj.transform.rotation = Quaternion.LookRotation(tDir) * Quaternion.Euler(0f, 90f, 0f);
-			if (bIsRB)
-			{
-				Rigidbody RB = tObj.AddComponent<Rigidbody>();
-				RB.mass = Mass;
-				RB.centerOfMass = new Vector3(0f, -10f, 0f);
-			}
-			tObj.transform.parent = MasterGameObj.transform;
-			tObj.transform.position = tPosRR;
-			tObj.name = "StopSignRR";
-			if(GSDRI.IgnoreCorner == 3){ Object.DestroyImmediate(tObj); }
+
+			tObj = GenerateStopSign("StopSignRR", tPosRR, tDir, realDistLane, MasterGameObj.transform);
+
+			if (GSDRI.IgnoreCorner == 3){ Object.DestroyImmediate(tObj); }
+		}
+
+		private static GameObject GenerateStopSign(string name, Vector3 pos, Vector3 dir, float dist, Transform parent)
+        {
+			Object prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDSignStop.prefab", typeof(GameObject));
+			float zTriggerDistance = 5f;
+
+			GameObject tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+			tObj.transform.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, 90f, 0f);
+			tObj.transform.parent = parent.transform;
+			tObj.transform.position = pos;
+			tObj.name = name;
+
+			// Add collider to detect player
+			Vector3 worldScale = tObj.transform.TransformDirection(tObj.transform.localScale);
+			BoxCollider triggerCollider = tObj.AddComponent<BoxCollider>();
+			triggerCollider.isTrigger = true;
+			float xSize = dist / 4f;
+			triggerCollider.size = new Vector3(xSize, worldScale.y, zTriggerDistance);
+			triggerCollider.center = new Vector3(xSize / 2f, worldScale.y / 2f, -zTriggerDistance / 2f);
+
+			// Add stop sign script trigger
+			tObj.AddComponent<StopSignTrigger>();
+
+			return tObj;
 		}
 		
 		private static Vector3 StopSign_GetRot_RR(GSDRoadIntersection GSDRI, GSDSplineC tSpline){

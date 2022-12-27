@@ -210,7 +210,7 @@ namespace DrivingSimulation
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         [SerializeField]
-        private float _kmh;
+        public float _kmh;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         public int CurrentGear;
@@ -375,10 +375,10 @@ namespace DrivingSimulation
 
         #region Properties
 
-        private float KMh
+        public float KMh
         {
             get { return _kmh; }
-            set
+            private set
             {
                 _kmh = value;
                 _onKMhChanged.Invoke(_kmh);
