@@ -1050,8 +1050,10 @@ namespace GSD.Roads{
 		public List<GSDSplineN> ShoulderCutsRNodes;
 		public List<int> ShoulderCutsL;
 		public List<GSDSplineN> ShoulderCutsLNodes;
-		
-		public enum SaveMeshTypeEnum {Road,Shoulder,Intersection,Railing,Center,Bridge,RoadCut,SCut,BSCut,RoadConn};
+
+        private const string ROAD_LAYER = "Road";
+
+        public enum SaveMeshTypeEnum {Road,Shoulder,Intersection,Railing,Center,Bridge,RoadCut,SCut,BSCut,RoadConn};
 		
 		public RoadConstructorBufferMaker(GSDRoad _tRoad, RoadUpdateTypeEnum _tUpdateType){
 			tUpdateType = _tUpdateType;
@@ -1291,9 +1293,11 @@ namespace GSD.Roads{
 			//Main mesh object:
 			tRoad.MainMeshes = new GameObject("MainMeshes");
 			tRoad.MainMeshes.transform.parent = tRoad.transform;
-			
+
 			//Road and shoulders:
+
 			tRoad.MeshRoad = new GameObject("RoadMesh");
+			tRoad.MeshRoad.layer = LayerMask.NameToLayer(ROAD_LAYER);
 			tRoad.MeshShoR = new GameObject("ShoulderR");
 			tRoad.MeshShoL = new GameObject("ShoulderL");
 			tRoad.MeshRoad.transform.parent = tRoad.MainMeshes.transform;
@@ -1951,7 +1955,12 @@ namespace GSD.Roads{
 					tRoad.GSDSpline.mNodes[i].UpdateCuts();	
 				}
 			}
-		}
+
+            foreach (Transform child in tRoad.MeshRoad.transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer(ROAD_LAYER);
+            }
+        }
 		
 		#region "MeshSetup2 - Intersections"
 //		private void MeshSetup2_Intersections_FixNormals(){

@@ -37,7 +37,7 @@ namespace DrivingSimulation
             _startNotificationCallback.AddListener(StartNotification);
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             _setNotificationCallback.RemoveListener(SetActiveNotification);
             _startNotificationCallback.RemoveListener(StartNotification);

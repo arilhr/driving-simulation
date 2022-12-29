@@ -22,6 +22,14 @@ namespace DrivingSimulation
 
         [BoxGroup("Events", Order = 5)]
         [SerializeField]
+        private GameEventInt _onPointDecreased = null;
+
+        [BoxGroup("Events", Order = 5)]
+        [SerializeField]
+        private GameEventInt _onPointIncreased = null;
+
+        [BoxGroup("Events", Order = 5)]
+        [SerializeField]
         private GameEventInt _addPointCallback = null;
 
         #endregion
@@ -58,6 +66,9 @@ namespace DrivingSimulation
                 Point = 0;
                 return;
             }
+
+            if (value < 0) _onPointDecreased.Invoke(Mathf.Abs(value));
+            if (value > 0) _onPointIncreased.Invoke(Mathf.Abs(value));
 
             Point += value;
         }

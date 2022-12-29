@@ -12,6 +12,13 @@ namespace DrivingSimulation
         [BoxGroup("Events")]
         [SerializeField]
         private GameEventNoParam _gameSuccessCallback = null;
+        [SerializeField]
+        private GameEventObject _onSetFinishLine = null;
+
+        private void Start()
+        {
+            _onSetFinishLine.Invoke(gameObject);
+        }
 
         private void OnTriggerEnter(Collider other)
         {

@@ -7,6 +7,8 @@ namespace DrivingSimulation
 {
     public class TrafficLightManager : MonoBehaviour
     {
+        private const string CROSSING_WRONG_LIGHT_KEY = "Crossing Wrong Light!";
+
         private enum LightType { None, Red, Yellow, Green }
 
         private const string RED_NAME = "redlight";
@@ -96,6 +98,9 @@ namespace DrivingSimulation
 
             if (GlobalEvents.Instance.AddPointCallback != null)
                 GlobalEvents.Instance.AddPointCallback.Invoke(-20);
+
+            if (GlobalEvents.Instance.AddMistakeCallback != null)
+                GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSSING_WRONG_LIGHT_KEY, 1);
         }
 
         private void OnDrawGizmos()

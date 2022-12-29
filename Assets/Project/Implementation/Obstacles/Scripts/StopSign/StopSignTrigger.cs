@@ -6,6 +6,8 @@ namespace DrivingSimulation
 {
     public class StopSignTrigger : MonoBehaviour
     {
+        private const string CROSS_STOP_SIGN_KEY = "Crossing Stop Sign!";
+
         private bool _playerComeFromFront = false;
         private bool _alreadyPassed = false;
         private bool _isSuccess = false;
@@ -78,6 +80,9 @@ namespace DrivingSimulation
 
             // Points
             GlobalEvents.Instance.AddPointCallback.Invoke(-10);
+
+            if (GlobalEvents.Instance.AddMistakeCallback != null)
+                GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSS_STOP_SIGN_KEY, 1);
         }
 
 #if UNITY_EDITOR

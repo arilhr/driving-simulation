@@ -356,3 +356,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _gameSuccessCallback: {fileID: 11400000, guid: 1657ac7ca70635d4cb111f0faaf591f6, type: 2}
+  _onSetFinishLine: {fileID: 11400000, guid: 401653d6bc139a047b8e79b580918a2f, type: 2}

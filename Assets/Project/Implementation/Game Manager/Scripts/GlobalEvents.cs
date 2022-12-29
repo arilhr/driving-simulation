@@ -9,6 +9,9 @@ namespace DrivingSimulation
     {
         public static GlobalEvents Instance = null;
 
+        [Header("Player Mistakes Events")]
+        public GameEventStringInt AddMistakeCallback = null;
+
         [Header("Point Manager Events")]
         public GameEventInt AddPointCallback = null;
 

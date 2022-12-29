@@ -29,7 +29,6 @@ namespace DrivingSimulation
             _gameLostCallback.RemoveListener(GameLost);
         }
 
-
         private void GameEnd()
         {
             _setInputActiveCallback.Invoke(false);

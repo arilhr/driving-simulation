@@ -36,12 +36,16 @@ namespace DrivingSimulation
 
         private void DisplayLineRenderer()
         {
+            if (_startPosition == null || _endPosition == null) return;
+
             NavMesh.CalculatePath(_startPosition.position, _endPosition.position, NavMesh.AllAreas, _path);
 
             // Create a list to hold the smooth points of the path
             List<Vector3> smoothPoints = new List<Vector3>();
 
             // Add the start point of the path to the list of smooth points
+            if (_path.corners.Length == 0) return;
+
             smoothPoints.Add(_path.corners[0]);
 
             // Iterate through the points in the path and add smooth points between each pair of points
@@ -67,6 +71,11 @@ namespace DrivingSimulation
                 Vector3 finalPos = smoothPoints[i] + new Vector3(0, 1f, 0);
                 _lineRenderer.SetPosition(i, finalPos);
             }
+        }
+
+        public void SetEndPoint(Transform end)
+        {
+            _endPosition = end;
         }
 
         Vector3 GetBezierPoint(Vector3 p0, Vector3 p1, Vector3 p2, float t)

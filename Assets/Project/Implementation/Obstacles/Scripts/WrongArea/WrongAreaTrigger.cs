@@ -6,6 +6,8 @@ namespace DrivingSimulation
 {
     public class WrongAreaTrigger : MonoBehaviour
     {
+        private const string WRONG_LANE_KEY = "Wrong Lane!";
+
         private bool _playerInArea = false;
 
         private const float _exitTime = 1f;
@@ -78,6 +80,9 @@ namespace DrivingSimulation
             GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
             GlobalEvents.Instance.AddPointCallback.Invoke(-10);
+
+            if (GlobalEvents.Instance.AddMistakeCallback != null)
+                GlobalEvents.Instance.AddMistakeCallback.Invoke(WRONG_LANE_KEY, 1);
         }
     }
 }
