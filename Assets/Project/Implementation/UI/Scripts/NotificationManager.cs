@@ -31,7 +31,7 @@ namespace DrivingSimulation
         [SerializeField]
         private GameEventThreeFloat _startNotificationCallback = null;
 
-        private void Awake()
+        private void OnEnable()
         {
             _setNotificationCallback.AddListener(SetActiveNotification);
             _startNotificationCallback.AddListener(StartNotification);
