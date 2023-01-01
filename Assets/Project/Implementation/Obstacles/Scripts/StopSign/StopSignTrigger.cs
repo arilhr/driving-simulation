@@ -23,7 +23,7 @@ namespace DrivingSimulation
 
             float angle = Vector3.Angle(forwardDir, directionToOther);
 
-            _playerComeFromFront = angle >= 90f;
+            _playerComeFromFront = angle >= 120f;
         }
 
         private void OnTriggerStay(Collider other)

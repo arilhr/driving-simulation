@@ -151,6 +151,7 @@ public class GSDRoadIntersection : MonoBehaviour{
 	
 	#if UNITY_EDITOR
 	#region "Setup"
+
 	public void Setup(GSDSplineN tNode, GSDSplineN xNode){
 		if(tNode.GSDSpline == xNode.GSDSpline){
 			bSameSpline = true;	

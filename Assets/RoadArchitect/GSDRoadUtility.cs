@@ -1,5 +1,6 @@
 using UnityEngine;
 using DrivingSimulation;
+using System.Linq;
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Collections;
@@ -2536,8 +2537,9 @@ namespace GSD.Roads{
 			}
 			
 			GameObject tObj = new GameObject(tName);
+			tObj.layer = LayerMask.NameToLayer(ConstantVariable.ROAD_LAYER_NAME);
 			MeshFilter MF = tObj.AddComponent<MeshFilter>();
-			Mesh tMesh = new Mesh(); 
+			Mesh tMesh = new Mesh();
     		tMesh.CombineMeshes(combine);
 			MF.sharedMesh = tMesh;
 			MeshRenderer MR = tObj.AddComponent<MeshRenderer>();
@@ -2737,6 +2739,7 @@ namespace GSD.Roads{
 			if(bIsMarkers){
 				tName = "Markers" + i.ToString();
 			}
+
 			CreatedObj = new GameObject(tName);
 			
 			if(!bIsMarkers){
@@ -4358,7 +4361,7 @@ namespace GSD.Roads{
 			tObj = GenerateStopSign("StopSignLL", tPosLL, tDir, realDistLane, MasterGameObj.transform);
 			//xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
 
-			if (GSDRI.IgnoreCorner == 2){ Object.DestroyImmediate(tObj); }
+			if (GSDRI.IgnoreCorner == 1){ Object.DestroyImmediate(tObj); }
 			
 			//RL:
 			tSpline = GSDRI.Node2.GSDSpline;
@@ -4366,7 +4369,7 @@ namespace GSD.Roads{
 
 			tObj = GenerateStopSign("StopSignRL", tPosRL, tDir, realDistLane, MasterGameObj.transform);
 
-			if (GSDRI.IgnoreCorner == 1){ Object.DestroyImmediate(tObj); }
+			if (GSDRI.IgnoreCorner == 2){ Object.DestroyImmediate(tObj); }
 
 			//RR:
 			tSpline = GSDRI.Node1.GSDSpline;
@@ -5841,7 +5844,7 @@ namespace GSD.Roads{
 				}
 				GSDRI.Node1.GSDSpline.tRoad.EditorUpdateMe = true;
 			}
-			
+
 			return tObj;
 		}
 		

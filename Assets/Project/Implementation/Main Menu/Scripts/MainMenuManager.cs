@@ -1,6 +1,7 @@
 using SOGameEvents;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DrivingSimulation
@@ -43,6 +44,5 @@ namespace DrivingSimulation
                 uiSpawned.LevelButton.onClick.AddListener(() => _gotoLevelCallback.Invoke(index));
             }
         }
-
     }
 }
