@@ -6,56 +6,75 @@ using UnityEngine;
 
 namespace DrivingSimulation
 {
+    public enum TurnSignType
+    {
+        None, Left, Right, Hazard
+    }
+
     public class TurnSignalManager : MonoBehaviour
     {
-        [BoxGroup("References")]
-        [SerializeField]
-        private GameObject _turnSignalLight = null;
-        
-        [BoxGroup("Events")]
-        [SerializeField]
-        private GameEventNoParam _toogleTurnSignalCallback = null;
+        [Header("Turn Sign Game Object")]
+        [SerializeField] private GameObject _turnLeftLight = null;
+        [SerializeField] private GameObject _turnRightLight = null;
 
-        [BoxGroup("Events")]
-        [SerializeField]
-        private GameEventBool _onTurnSignalChanged = null;
+        [Header("Events")]
+        [SerializeField] private GameEventNoParam _toogleLeftSignalCallback = null;
+        [SerializeField] private GameEventNoParam _toogleRightSignalCallback = null;
+        [SerializeField] private GameEventNoParam _turnOffSignalCallback = null;
 
-        [BoxGroup("Debug", Order = 100)]
-        private bool _isActive = false;
+        private TurnSignType _currentTurnSignal = TurnSignType.None;
 
-        #region Properties
-
-        public bool IsActive
+        public TurnSignType CurrentTurnSignal
         {
-            get { return _isActive; }
+            get { return _currentTurnSignal; }
             set
             {
-                _isActive = value;
-                _onTurnSignalChanged.Invoke(_isActive);
+                _currentTurnSignal = value;
+                if (_currentTurnSignal == TurnSignType.None)
+                {
+                    _turnLeftLight.SetActive(false);
+                    _turnRightLight.SetActive(false);
+                }
+
+                if (_currentTurnSignal == TurnSignType.Left)
+                {
+                    _turnLeftLight.SetActive(true);
+                    _turnRightLight.SetActive(false);
+                }
+
+                if (_currentTurnSignal == TurnSignType.Right)
+                {
+                    _turnLeftLight.SetActive(false);
+                    _turnRightLight.SetActive(true);
+                }
+
+                if (_currentTurnSignal == TurnSignType.Hazard)
+                {
+                    _turnLeftLight.SetActive(true);
+                    _turnRightLight.SetActive(true);
+                }
             }
         }
-
-        #endregion
 
         #region Mono
 
         private void Awake()
         {
             Initialize();
-
-            IsActive = false;
         }
 
         private void Initialize()
         {
-            _toogleTurnSignalCallback.AddListener(Toogle);
-            _onTurnSignalChanged.AddListener(OnTurnSignalChanged);
+            _toogleLeftSignalCallback.AddListener(ToogleTurnLeftSignal);
+            _toogleRightSignalCallback.AddListener(ToogleTurnRightSignal);
+            _turnOffSignalCallback.AddListener(TurnOffSignal);
         }
 
         private void Dispose()
         {
-            _toogleTurnSignalCallback.RemoveListener(Toogle);
-            _onTurnSignalChanged.RemoveListener(OnTurnSignalChanged);
+            _toogleLeftSignalCallback.RemoveListener(ToogleTurnLeftSignal);
+            _toogleRightSignalCallback.RemoveListener(ToogleTurnRightSignal);
+            _turnOffSignalCallback.RemoveListener(TurnOffSignal);
         }
 
         private void OnDestroy()
@@ -67,14 +86,31 @@ namespace DrivingSimulation
 
         #region Methods
 
-        private void Toogle()
+        private void ToogleTurnLeftSignal()
         {
-            IsActive = !IsActive;
+            if (_currentTurnSignal == TurnSignType.Left)
+            {
+                CurrentTurnSignal = TurnSignType.None;
+                return;
+            }
+
+            CurrentTurnSignal = TurnSignType.Left;
         }
 
-        private void OnTurnSignalChanged(bool isActive)
+        private void ToogleTurnRightSignal()
         {
-            _turnSignalLight.SetActive(isActive);
+            if (_currentTurnSignal == TurnSignType.Right)
+            {
+                CurrentTurnSignal = TurnSignType.None;
+                return;
+            }
+
+            CurrentTurnSignal = TurnSignType.Right;
+        }
+
+        private void TurnOffSignal()
+        {
+            CurrentTurnSignal = TurnSignType.None;
         }
 
         #endregion

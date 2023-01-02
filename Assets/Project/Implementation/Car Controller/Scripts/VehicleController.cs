@@ -422,7 +422,7 @@ namespace DrivingSimulation
 
             GetWheelsIsGrounded();
 
-            KMh = _rigidbody.velocity.magnitude * 3.6f;
+            KMh = _rigidbody.velocity.magnitude * 1.8f;
 
             _inclinationFactorForcesDown = Mathf.Clamp(Mathf.Abs(Vector3.Dot(Vector3.up, transform.up)), _vehicleSettings._aerodynamics.downForceAngleFactor, 1.0f);
 

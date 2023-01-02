@@ -1526,6 +1526,7 @@ namespace GSD.Roads{
 			//Cleanups:
 			foreach(GSDRoadIntersection GSDRI in tGSDRIs){
 				GSDIntersectionObjects.CleanupIntersectionObjects(GSDRI.transform.gameObject);
+				GSDIntersectionObjects.CreateTurnSignAllWay(GSDRI.transform.gameObject, true);
 				if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
 					GSDIntersectionObjects.CreateStopSignsAllWay(GSDRI.transform.gameObject,true);
 				}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1){
@@ -4308,19 +4309,118 @@ namespace GSD.Roads{
 				if(MasterGameObj.transform.GetChild(i).name.ToLower().Contains("trafficlight")){
 					tObjtoDelete.Add(MasterGameObj.transform.GetChild(i).gameObject);	
 				}
+				if (MasterGameObj.transform.GetChild(i).name.ToLower().Contains("turnsign"))
+				{
+					tObjtoDelete.Add(MasterGameObj.transform.GetChild(i).gameObject);
+				}
 			}
 			for(int i=(tObjtoDelete.Count-1);i>=0;i--){
 				Object.DestroyImmediate(tObjtoDelete[i]);	
 			}
 		}
 
+		#region Turn Sign Trigger
+
+		public static void CreateTurnSignAllWay(GameObject MasterGameObj, bool bIsRB = true)
+		{
+			CreateTurnSignAllWay_Do(ref MasterGameObj, bIsRB);
+		}
+
+		private static void CreateTurnSignAllWay_Do(ref GameObject MasterGameObj, bool bIsRB)
+		{
+			GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
+			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
+
+			GameObject tObj = null;
+			Vector3 xDir = default(Vector3);
+			Vector3 tDir = default(Vector3);
+			float LaneWidth = tSpline.tRoad.opt_LaneWidth;
+			float ShoulderWidth = tSpline.tRoad.opt_ShoulderWidth;
+
+			int Lanes = tSpline.tRoad.opt_Lanes;
+			int LanesHalf = Lanes / 2;
+
+			//Cleanup:
+			CleanupIntersectionObjects(MasterGameObj);
+
+			//Get four points:
+			float DistFromCorner = (ShoulderWidth * 0.45f);
+			Vector3 tPosRR = default(Vector3);
+			Vector3 tPosRL = default(Vector3);
+			Vector3 tPosLR = default(Vector3);
+			Vector3 tPosLL = default(Vector3);
+			GetFourPoints(GSDRI, out tPosRR, out tPosRL, out tPosLL, out tPosLR, DistFromCorner);
+
+			float InterDist = Vector3.Distance(GSDRI.CornerRL, GSDRI.CornerLL);
+			float realDistLane = InterDist;
+
+			//LR:
+			tSpline = GSDRI.Node2.GSDSpline;
+			tDir = StopSign_GetRot_LR(GSDRI, tSpline);
+			tObj = GenerateTurnTrigger("LR", tPosLR, tDir, realDistLane, MasterGameObj.transform);
+
+			if (GSDRI.IgnoreCorner == 0) { Object.DestroyImmediate(tObj); }
+
+			//LL:
+			tSpline = GSDRI.Node1.GSDSpline;
+			tDir = StopSign_GetRot_LL(GSDRI, tSpline);
+			tObj = GenerateTurnTrigger("LL", tPosLL, tDir, realDistLane, MasterGameObj.transform);
+			//xDir = (GSDRI.CornerLR - GSDRI.transform.position).normalized;
+
+			if (GSDRI.IgnoreCorner == 1) { Object.DestroyImmediate(tObj); }
+
+			//RL:
+			tSpline = GSDRI.Node2.GSDSpline;
+			tDir = StopSign_GetRot_RL(GSDRI, tSpline);
+			tObj = GenerateTurnTrigger("RL", tPosRL, tDir, realDistLane, MasterGameObj.transform);
+
+			if (GSDRI.IgnoreCorner == 2) { Object.DestroyImmediate(tObj); }
+
+			//RR:
+			tSpline = GSDRI.Node1.GSDSpline;
+			tDir = StopSign_GetRot_RR(GSDRI, tSpline);
+			tObj = GenerateTurnTrigger("RR", tPosRR, tDir, realDistLane, MasterGameObj.transform);
+
+			if (GSDRI.IgnoreCorner == 3) { Object.DestroyImmediate(tObj); }
+		}
+
+
+		private static GameObject GenerateTurnTrigger(string posName, Vector3 pos, Vector3 dir, float dist, Transform parent)
+		{
+			GameObject prefab = new GameObject();
+			float zTriggerDistance = 5f;
+
+			GameObject tObj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+			GameObject.DestroyImmediate(prefab);
+			tObj.transform.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, 90f, 0f);
+			tObj.transform.parent = parent.transform;
+			tObj.transform.position = pos;
+			tObj.name = $"TurnSign{posName}";
+
+			// Add collider to detect player
+			BoxCollider triggerCollider = tObj.AddComponent<BoxCollider>();
+			triggerCollider.isTrigger = true;
+			float ySize = 5f;
+			float xSize = dist;
+			triggerCollider.size = new Vector3(xSize, ySize, zTriggerDistance);
+			triggerCollider.center = new Vector3(xSize / 2f, ySize / 2f, -zTriggerDistance / 2f);
+
+			// Add turn sign trigger script trigger
+			ChangeLaneTrigger _laneTrigger = tObj.AddComponent<ChangeLaneTrigger>();
+			_laneTrigger.Position = posName;
+
+			return tObj;
+		}
+
+
+		#endregion
+
 		#region "Stop Sign All Way"
 		public static void CreateStopSignsAllWay(GameObject MasterGameObj, bool bIsRB = true){
 			CreateStopSignsAllWay_Do(ref MasterGameObj, bIsRB);
 		}
+
 		private static void CreateStopSignsAllWay_Do(ref GameObject MasterGameObj, bool bIsRB){
-			Object prefab = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/RoadArchitect/Mesh/RoadObj/Signs/GSDSignStop.prefab", typeof(GameObject));
-	
 			GSDRoadIntersection GSDRI = MasterGameObj.GetComponent<GSDRoadIntersection>();
 			GSDSplineC tSpline = GSDRI.Node1.GSDSpline;
 			
@@ -4334,7 +4434,7 @@ namespace GSD.Roads{
 			int LanesHalf = Lanes / 2;
 
 			//Cleanup:
-			CleanupIntersectionObjects(MasterGameObj);
+			// CleanupIntersectionObjects(MasterGameObj);
 			
 			//Get four points:
 			float DistFromCorner = (ShoulderWidth*0.45f);
@@ -4350,7 +4450,6 @@ namespace GSD.Roads{
 			//LR:
 			tSpline = GSDRI.Node2.GSDSpline;
 			tDir = StopSign_GetRot_LR(GSDRI, tSpline);
-
 			tObj = GenerateStopSign("StopSignLR", tPosLR, tDir, realDistLane, MasterGameObj.transform);
 
 			if (GSDRI.IgnoreCorner == 0){ Object.DestroyImmediate(tObj); }
@@ -4366,7 +4465,6 @@ namespace GSD.Roads{
 			//RL:
 			tSpline = GSDRI.Node2.GSDSpline;
 			tDir = StopSign_GetRot_RL(GSDRI,tSpline);
-
 			tObj = GenerateStopSign("StopSignRL", tPosRL, tDir, realDistLane, MasterGameObj.transform);
 
 			if (GSDRI.IgnoreCorner == 2){ Object.DestroyImmediate(tObj); }
@@ -4374,7 +4472,6 @@ namespace GSD.Roads{
 			//RR:
 			tSpline = GSDRI.Node1.GSDSpline;
 			tDir = StopSign_GetRot_RR(GSDRI, tSpline);
-
 			tObj = GenerateStopSign("StopSignRR", tPosRR, tDir, realDistLane, MasterGameObj.transform);
 
 			if (GSDRI.IgnoreCorner == 3){ Object.DestroyImmediate(tObj); }
@@ -4504,7 +4601,7 @@ namespace GSD.Roads{
 			GetFourPoints(GSDRI, out tPosRR,out tPosRL,out tPosLL,out tPosLR,DistFromCorner);
 
 			//Cleanup:
-			CleanupIntersectionObjects(MasterGameObj);
+			// CleanupIntersectionObjects(MasterGameObj);
 			
 			float[] tempDistances = new float[4];
 			tempDistances[0] = Vector3.Distance(GSDRI.CornerRL,GSDRI.CornerLL);
@@ -4884,14 +4981,21 @@ namespace GSD.Roads{
 				ProcessPole(MasterGameObj,tLL,tan,2,InterDist);
 			}
 			
-			if(GSDRI.IgnoreCorner == 0){
-				if(tRR != null){ Object.DestroyImmediate(tRR); }
-			}else if(GSDRI.IgnoreCorner == 1){
-				if(tRL != null){ Object.DestroyImmediate(tLR); }
-			}else if(GSDRI.IgnoreCorner == 2){
-				if(tLL != null){ Object.DestroyImmediate(tLL); }
-			}else if(GSDRI.IgnoreCorner == 3){
-				if(tLR != null){ Object.DestroyImmediate(tRL);  }
+			if(GSDRI.IgnoreCorner == 0)
+			{
+				if (tRL != null) { Object.DestroyImmediate(tLR); }
+			}
+			else if(GSDRI.IgnoreCorner == 1) 
+			{
+				if (tRR != null) { Object.DestroyImmediate(tRR); }
+			}
+			else if(GSDRI.IgnoreCorner == 2) 
+			{
+				if (tLR != null) { Object.DestroyImmediate(tRL); }
+			}
+			else if(GSDRI.IgnoreCorner == 3)
+			{
+				if (tLL != null) { Object.DestroyImmediate(tLL); }
 			}
 		}
 		

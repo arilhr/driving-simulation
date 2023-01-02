@@ -3265,7 +3265,7 @@ namespace GSD.Threaded{
 						if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
 							GSDRI.IgnoreCorner = 0;
 						}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
-							GSDRI.IgnoreCorner = 1;	
+							GSDRI.IgnoreCorner = 0;	
 						}
 						
 						if(!oNode1.GSDRI.bFlipped){
@@ -3283,7 +3283,7 @@ namespace GSD.Threaded{
 						if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
 							GSDRI.IgnoreCorner = 2;
 						}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
-							GSDRI.IgnoreCorner = 3;	
+							GSDRI.IgnoreCorner = 2;	
 						}
 						
 						if(!oNode1.GSDRI.bFlipped){
@@ -3302,7 +3302,7 @@ namespace GSD.Threaded{
 							if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
 								GSDRI.IgnoreCorner = 3;
 							}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
-								GSDRI.IgnoreCorner = 0;	
+								GSDRI.IgnoreCorner = 3;	
 							}
 							
 							if(!oNode1.GSDRI.bFlipped){
@@ -3317,7 +3317,7 @@ namespace GSD.Threaded{
 							GSDRI.IgnoreSide = 0;
 							GSDRI.iType = GSDRoadIntersection.IntersectionTypeEnum.ThreeWay;
 							if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
-								GSDRI.IgnoreCorner = 1;
+								GSDRI.IgnoreCorner = 2;
 							}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
 								GSDRI.IgnoreCorner = 2;
 							}
@@ -3336,7 +3336,7 @@ namespace GSD.Threaded{
 							GSDRI.IgnoreSide = 0;
 							GSDRI.iType = GSDRoadIntersection.IntersectionTypeEnum.ThreeWay;
 							if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
-								GSDRI.IgnoreCorner = 1;
+								GSDRI.IgnoreCorner = 2;
 							}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
 								GSDRI.IgnoreCorner = 2;	
 							}
@@ -3355,7 +3355,7 @@ namespace GSD.Threaded{
 							if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.StopSign_AllWay){
 								GSDRI.IgnoreCorner = 3;
 							}else if(GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight1 || GSDRI.iStopType == GSDRoadIntersection.iStopTypeEnum.TrafficLight2){
-								GSDRI.IgnoreCorner = 0;	
+								GSDRI.IgnoreCorner = 3;	
 							}
 							
 							if(!oNode1.GSDRI.bFlipped){

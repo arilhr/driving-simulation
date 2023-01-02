@@ -553,8 +553,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5272376756136226300}
   - component: {fileID: 4204165520494412602}
+  - component: {fileID: 1927535704}
   m_Layer: 6
-  m_Name: Point Light (3)
+  m_Name: Turn Sign Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -568,7 +569,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2860721034540622526}
   m_LocalRotation: {x: 0.00000021792945, y: 0.9969524, z: -0.07801209, w: 0.0000028759237}
-  m_LocalPosition: {x: 1.2930001, y: 2.02, z: -3.15}
+  m_LocalPosition: {x: 1.5, y: 2.02, z: -3.15}
   m_LocalScale: {x: 1, y: 1, z: 0.39562994}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -584,11 +585,11 @@ Light:
   m_GameObject: {fileID: 2860721034540622526}
   m_Enabled: 1
   serializedVersion: 10
-  m_Type: 0
+  m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 0.14877309, b: 0, a: 1}
-  m_Intensity: 2
-  m_Range: 30
+  m_Color: {r: 1, g: 0.7898789, b: 0.23113209, a: 1}
+  m_Intensity: 5
+  m_Range: 1
   m_SpotAngle: 80
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -637,6 +638,26 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!95 &1927535704
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2860721034540622526}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0d7b3c4651c731a42a72530786d07438, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3107523180327170599
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,7 +836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4305744415542221492
 Transform:
   m_ObjectHideFlags: 0
@@ -1130,6 +1151,9 @@ GameObject:
   - component: {fileID: 4305744416550480596}
   - component: {fileID: 4305744416550480599}
   - component: {fileID: 1539519015}
+  - component: {fileID: 1928135256}
+  - component: {fileID: 1928135258}
+  - component: {fileID: 728954881012303181}
   m_Layer: 6
   m_Name: Car
   m_TagString: Untagged
@@ -1710,6 +1734,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 244a038c53f10c644acb49c637910f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1928135256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaefb32148fa1764ea1fde4ea39d7306, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _turnLeftLight: {fileID: 8453903469086681398}
+  _turnRightLight: {fileID: 2860721034540622526}
+  _toogleLeftSignalCallback: {fileID: 11400000, guid: 4cc4d6abc617ffc44871ad4f989fe33e, type: 2}
+  _toogleRightSignalCallback: {fileID: 11400000, guid: e964408f26ca5b74ba9ac90f382bb9ef, type: 2}
+  _turnOffSignalCallback: {fileID: 11400000, guid: 3a7ac4022b7749b4dbf9e23536bbea37, type: 2}
+--- !u!114 &1928135258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74401169dd8c48747a50ddc3af5d5a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toogleTurnSignalRightCallback: {fileID: 11400000, guid: e964408f26ca5b74ba9ac90f382bb9ef, type: 2}
+  _onTurnRightSignalChanged: {fileID: 11400000, guid: b82685fafca443a4f8b14e28223aa643, type: 2}
+  _toogleTurnSignalLeftCallback: {fileID: 11400000, guid: 4cc4d6abc617ffc44871ad4f989fe33e, type: 2}
+  _onTurnLeftSignalChanged: {fileID: 11400000, guid: 8569dd8e93328d0489698ff44daf565d, type: 2}
+--- !u!114 &728954881012303181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d4c89cf683f8b648b1bcbd4da072495, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _turnOffSignalCallback: {fileID: 11400000, guid: 3a7ac4022b7749b4dbf9e23536bbea37, type: 2}
 --- !u!1 &4305744416819254936
 GameObject:
   m_ObjectHideFlags: 0
@@ -1993,8 +2063,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1124369884041907840}
   - component: {fileID: 1865966087975554575}
+  - component: {fileID: 1240949340}
   m_Layer: 6
-  m_Name: Point Light (2)
+  m_Name: Turn Sign Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2008,7 +2079,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8453903469086681398}
   m_LocalRotation: {x: 0.00000021792945, y: 0.9969524, z: -0.07801209, w: 0.0000028759237}
-  m_LocalPosition: {x: -1.295, y: 2.02, z: -3.15}
+  m_LocalPosition: {x: -1.5, y: 2, z: -3.084}
   m_LocalScale: {x: 1, y: 1, z: 0.39562994}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2024,11 +2095,11 @@ Light:
   m_GameObject: {fileID: 8453903469086681398}
   m_Enabled: 1
   serializedVersion: 10
-  m_Type: 0
+  m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 0.14877309, b: 0, a: 1}
-  m_Intensity: 2
-  m_Range: 30
+  m_Color: {r: 1, g: 0.7898789, b: 0.23113209, a: 1}
+  m_Intensity: 5
+  m_Range: 1
   m_SpotAngle: 80
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -2077,6 +2148,26 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!95 &1240949340
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8453903469086681398}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0d7b3c4651c731a42a72530786d07438, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8670820085818488796
 GameObject:
   m_ObjectHideFlags: 0
