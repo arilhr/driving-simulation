@@ -36,7 +36,15 @@ namespace DrivingSimulation
 
         #region Properties
 
-        public int Point { get { return _point; } private set { _point = value; _onPointChanged.Invoke(_point); } }
+        public int Point 
+        { 
+            get { return _point; } 
+            private set 
+            { 
+                _point = value; 
+                _onPointChanged.Invoke(_point); 
+            } 
+        }
 
         #endregion
 
@@ -44,10 +52,13 @@ namespace DrivingSimulation
 
         private void Awake()
         {
-            Point = _startPoint;
-
             // event init
             _addPointCallback.AddListener(AddPoint);
+        }
+
+        private void Start()
+        {
+            Point = _startPoint;
         }
 
         private void OnDestroy()
@@ -61,12 +72,6 @@ namespace DrivingSimulation
 
         private void AddPoint(int value)
         {
-            if (Point - value <= 0)
-            {
-                Point = 0;
-                return;
-            }
-
             if (value < 0) _onPointDecreased.Invoke(Mathf.Abs(value));
             if (value > 0) _onPointIncreased.Invoke(Mathf.Abs(value));
 

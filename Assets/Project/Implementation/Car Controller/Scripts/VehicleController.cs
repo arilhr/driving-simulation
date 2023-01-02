@@ -1192,21 +1192,15 @@ namespace DrivingSimulation
             }
 
             _handBrake_Input = 0.0f;
-            if (handBrakeTrue)
+
+            if (_brakeVerticalInput < 0f && Vector3.Dot(_rigidbody.velocity, _rigidbody.transform.forward) > 0f)
             {
-                if (Mathf.Abs(_brakeVerticalInput) < 0.9f)
-                {
-                    _handBrake_Input = 2;
-                }
-                else
-                {
-                    _handBrake_Input = 0;
-                    handBrakeTrue = false;
-                }
+                _handBrake_Input = 2;
             }
             else
             {
                 _handBrake_Input = 0;
+                handBrakeTrue = false;
             }
 
             if (_brakeInput)
@@ -1214,7 +1208,7 @@ namespace DrivingSimulation
                 _handBrake_Input = 2;
             }
 
-            _handBrake_Input = _handBrake_Input * 1000;
+            _handBrake_Input *= 1000;
             _totalFootBrake = _currentBrakeValue * 0.5f * _vehicleSettings.vehicleMass;
             _totalHandBrake = _handBrake_Input * 0.5f * _vehicleSettings.vehicleMass;
 

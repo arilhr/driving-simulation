@@ -140,7 +140,6 @@ namespace DrivingSimulation
 
             // Points
             GlobalEvents.Instance.AddPointCallback.Invoke(10);
-            GlobalEvents.Instance.AddMistakeCallback.Invoke(CORRECT_MESSAGE, 1);
         }
 
         private void FalseBlinker()

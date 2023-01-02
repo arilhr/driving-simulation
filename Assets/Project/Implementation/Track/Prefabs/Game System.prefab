@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7120501532103595909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7120501532103595907}
+  - component: {fileID: 7120501532103595906}
+  - component: {fileID: 7120501532103595905}
+  - component: {fileID: 7120501532103595904}
+  m_Layer: 0
+  m_Name: Game System
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7120501532103595907
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 327.70294, y: -1.7356205, z: 2372.4785}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7120501532103595906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d09fae460d24a24997c950730e61451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _startPoint: 0
+  _point: 0
+  _onPointChanged: {fileID: 11400000, guid: 46f3426d90a191f4890361cbe62bd1a8, type: 2}
+  _onPointDecreased: {fileID: 11400000, guid: dd7a017482e7194478084d7a512102b7, type: 2}
+  _onPointIncreased: {fileID: 11400000, guid: e2bec873b2623e047839bd7c49a01d2a, type: 2}
+  _addPointCallback: {fileID: 11400000, guid: f319a45e6d6d9ca4bb7f52d20acc9334, type: 2}
+--- !u!114 &7120501532103595905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17cf2e33d4ae6584ab7bfab76641f0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AddMistakeCallback: {fileID: 11400000, guid: cc2b956d88c5e0d438ae51762cb6b2d6, type: 2}
+  AddPointCallback: {fileID: 11400000, guid: f319a45e6d6d9ca4bb7f52d20acc9334, type: 2}
+  SetNotificationCallback: {fileID: 11400000, guid: 8fabd5e2cbb3bb94093512b774ff32a6, type: 2}
+  StartNoticationCallback: {fileID: 11400000, guid: 25f1c0727458f1a46a33a95c924e1e72, type: 2}
+--- !u!114 &7120501532103595904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05fe3ba47fa9b2944b8c6011c1abdfb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _addMistakeCallback: {fileID: 11400000, guid: cc2b956d88c5e0d438ae51762cb6b2d6, type: 2}
