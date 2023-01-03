@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d09fae460d24a24997c950730e61451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startPoint: 0
+  _startPoint: 10
   _point: 0
   _onPointChanged: {fileID: 11400000, guid: 46f3426d90a191f4890361cbe62bd1a8, type: 2}
   _onPointDecreased: {fileID: 11400000, guid: dd7a017482e7194478084d7a512102b7, type: 2}

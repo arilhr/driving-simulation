@@ -1154,6 +1154,7 @@ GameObject:
   - component: {fileID: 1928135256}
   - component: {fileID: 1928135258}
   - component: {fileID: 728954881012303181}
+  - component: {fileID: 7807322617001204630}
   m_Layer: 6
   m_Name: Car
   m_TagString: Untagged
@@ -1780,6 +1781,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _turnOffSignalCallback: {fileID: 11400000, guid: 3a7ac4022b7749b4dbf9e23536bbea37, type: 2}
+--- !u!114 &7807322617001204630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b88675d6cdefa24da38498872bbb79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _violatePoint: 10
+  _timeBetweenViolate: 3
+  _isMaxActive: 0
+  _maxSpeed: 80
+  _setActiveMaxLimitCallback: {fileID: 11400000, guid: 18bdf713093b4bd42b70f1297da2df48, type: 2}
+  _onActiveMaxLimiter: {fileID: 11400000, guid: d2a7072998bd9e4479511b9c5501b1ca, type: 2}
+  _changedMaxSpeedCallback: {fileID: 11400000, guid: c5a62d74cf6540d448626b4cdb87cd73, type: 2}
+  _onChangedMaxSpeedLimit: {fileID: 11400000, guid: 45e2ec8153352074985549b177c42eda, type: 2}
+  _isMinActive: 0
+  _minSpeed: 30
+  _setActiveMinLimitCallback: {fileID: 11400000, guid: 7a43b7dfca4d1974ba00af02fa092242, type: 2}
+  _onActiveMinLimiter: {fileID: 11400000, guid: bbb397e3e674efa48901d70052a16f17, type: 2}
+  _changedMinSpeedCallback: {fileID: 11400000, guid: aeb53ff87d4130045889a1e508846fb9, type: 2}
+  _onChangedMinSpeedLimit: {fileID: 11400000, guid: 6e128dd71f51a0141a014d331de27b44, type: 2}
+  _onCheckSpeed: {fileID: 11400000, guid: 7cc0ca0775836864a92072b59a4e7cbc, type: 2}
+  _onViolateSpeedLimit: {fileID: 11400000, guid: 75a4822f375cfd648ba3b877e652a0e6, type: 2}
+  _addPointCallback: {fileID: 11400000, guid: f319a45e6d6d9ca4bb7f52d20acc9334, type: 2}
+  _currentTimeBeetwenViolateMaxLimit: 0
+  _currentTimeBeetwenViolateMinLimit: 0
+  _canViolated: 1
 --- !u!1 &4305744416819254936
 GameObject:
   m_ObjectHideFlags: 0

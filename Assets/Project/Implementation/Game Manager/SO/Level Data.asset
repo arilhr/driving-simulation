@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Level Data
   m_EditorClassIdentifier: 
   _levelScenes:
-  - scene: Traffic Level 1
-  - scene: Traffic Level 2
-  - scene: Traffic Level 3
+  - scene: Track Level 1
+  - scene: Track Level 2
+  - scene: Track Level 3
+  - scene: Track Level 4
+  - scene: Track Level 5
+  - scene: Track Level 6

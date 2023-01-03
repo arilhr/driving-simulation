@@ -80,12 +80,12 @@ namespace DrivingSimulation
 
             if (before == "LL")
             {
-                if (after == "RL")
+                if (after == "LR")
                 {
                     CheckTurnSignal(TurnSignType.Right);
                 }
 
-                if (after == "LR")
+                if (after == "RL")
                 {
                     CheckTurnSignal(TurnSignType.Left);
                 }

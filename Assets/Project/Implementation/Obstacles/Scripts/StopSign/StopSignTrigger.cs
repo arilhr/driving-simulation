@@ -92,6 +92,6 @@ namespace DrivingSimulation
 
             Gizmos.DrawLine(transform.position, transform.position + transform.forward);
         }
-    }
 #endif
+    }
 }
