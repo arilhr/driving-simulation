@@ -79,8 +79,8 @@ namespace DrivingSimulation
                 Debug.Log("Level Datas is null!");
                 return;
             }
-            
-            if (indexLevel >= _levelDatas._levelScenes.Count - 1 || indexLevel < 0)
+
+            if (indexLevel >= _levelDatas._levelScenes.Count || indexLevel < 0)
             {
                 Debug.Log($"{indexLevel} Index is greater than total level list or lower than 0!");
                 return;

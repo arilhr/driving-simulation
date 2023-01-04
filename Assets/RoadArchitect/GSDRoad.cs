@@ -8,9 +8,78 @@ using UnityEditor;
 #endif
 [ExecuteInEditMode]
 public class GSDRoad : MonoBehaviour{
-	#if UNITY_EDITOR
-	
-	public GameObject MainMeshes;
+
+    //Road editor options: 
+    public float opt_LaneWidth = 20f;               //Done.
+    public bool opt_bShouldersEnabled = true;       //Disabled for now. Comprimises integrity of roads.
+    public float opt_ShoulderWidth = 3f;                //Done.
+    public int opt_Lanes = 2;                       //Done.
+    public float opt_RoadDefinition = 5f;           //Done.
+    public bool opt_RoadCornerDefinition = false;   //Disable for now. No point.
+    public bool opt_bRoadCuts = true;
+    public bool opt_bShoulderCuts = true;
+    public bool opt_bDynamicCuts = false;
+    public bool opt_bMaxGradeEnabled = true;
+    public float opt_MaxGrade = 0.08f;
+    public bool opt_UseDefaultMaterials = true;
+    public bool opt_AutoUpdateInEditor = true;
+
+    public float opt_TerrainSubtract_Match = 0.1f;
+    public bool opt_bGSDRoadRaise = false;
+
+    public float opt_MatchHeightsDistance = 50f;
+    public float opt_ClearDetailsDistance = 30f;
+    public float opt_ClearDetailsDistanceHeight = 5f;
+    public float opt_ClearTreesDistance = 30f;
+    public float opt_ClearTreesDistanceHeight = 50f;
+
+    public bool opt_HeightModEnabled = true;
+    public bool opt_DetailModEnabled = true;
+    public bool opt_TreeModEnabled = true;
+
+    public bool opt_SaveTerrainHistoryOnDisk = true;
+    public float opt_MagnitudeThreshold = 300f;
+    public bool opt_GizmosEnabled = true;
+    public bool opt_bMultithreading = true;
+    public bool opt_bSaveMeshes = false;
+    public bool opt_bUseMeshColliders = true;
+    public bool opt_bIsStatic = false;
+    public bool opt_bIsLightmapped = false;
+
+    public enum RoadMaterialDropdownEnum
+    {
+        Asphalt,
+        Dirt,
+        Brick,
+        Cobblestone
+    };
+    public RoadMaterialDropdownEnum opt_tRoadMaterialDropdown = RoadMaterialDropdownEnum.Asphalt;
+    public RoadMaterialDropdownEnum tRoadMaterialDropdownOLD = RoadMaterialDropdownEnum.Asphalt;
+
+
+    public Material RoadMaterial1;
+    public Material RoadMaterial2;
+    public Material RoadMaterial3;
+    public Material RoadMaterial4;
+    public Material RoadMaterialMarker1;
+    public Material RoadMaterialMarker2;
+    public Material RoadMaterialMarker3;
+    public Material RoadMaterialMarker4;
+    public Material ShoulderMaterial1;
+    public Material ShoulderMaterial2;
+    public Material ShoulderMaterial3;
+    public Material ShoulderMaterial4;
+    public Material ShoulderMaterialMarker1;
+    public Material ShoulderMaterialMarker2;
+    public Material ShoulderMaterialMarker3;
+    public Material ShoulderMaterialMarker4;
+
+    public PhysicMaterial RoadPhysicMaterial;
+    public PhysicMaterial ShoulderPhysicMaterial;
+
+#if UNITY_EDITOR
+
+    public GameObject MainMeshes;
 	public GameObject MeshRoad;
 	public GameObject MeshShoR;
 	public GameObject MeshShoL;
@@ -40,73 +109,6 @@ public class GSDRoad : MonoBehaviour{
 	[System.NonSerialized]
 	public bool bUpdateSpline = false;
 
-	//Road editor options: 
-	public float	opt_LaneWidth = 20f;				//Done.
-	public bool 	opt_bShouldersEnabled = true;		//Disabled for now. Comprimises integrity of roads.
-	public float 	opt_ShoulderWidth = 3f;				//Done.
-	public int 		opt_Lanes = 2;						//Done.
-	public float 	opt_RoadDefinition = 5f;			//Done.
-	public bool 	opt_RoadCornerDefinition = false;   //Disable for now. No point.
-	public bool 	opt_bRoadCuts = true;
-	public bool 	opt_bShoulderCuts = true;
-	public bool 	opt_bDynamicCuts = false;
-	public bool		opt_bMaxGradeEnabled = true;
-	public float	opt_MaxGrade = 0.08f;
-	public bool 	opt_UseDefaultMaterials = true;
-	public bool 	opt_AutoUpdateInEditor = true;
-	
-	public float 	opt_TerrainSubtract_Match = 0.1f;
-	public bool		opt_bGSDRoadRaise = false;
-	
-	public float 	opt_MatchHeightsDistance = 50f;
-	public float 	opt_ClearDetailsDistance = 30f;
-	public float 	opt_ClearDetailsDistanceHeight = 5f;
-	public float 	opt_ClearTreesDistance = 30f;
-	public float 	opt_ClearTreesDistanceHeight = 50f;
-	
-	public bool		opt_HeightModEnabled = true;
-	public bool		opt_DetailModEnabled = true;
-	public bool		opt_TreeModEnabled = true;
-	
-	public bool		opt_SaveTerrainHistoryOnDisk = true;
-	public float	opt_MagnitudeThreshold = 300f;
-	public bool		opt_GizmosEnabled = true;
-	public bool 	opt_bMultithreading = true;
-	public bool		opt_bSaveMeshes = false;
-    public bool     opt_bUseMeshColliders = true;
-    public bool     opt_bIsStatic = false;
-    public bool     opt_bIsLightmapped = false;
-
-    public enum RoadMaterialDropdownEnum {
-        Asphalt,
-        Dirt,
-        Brick,
-        Cobblestone
-    };
-    public RoadMaterialDropdownEnum opt_tRoadMaterialDropdown = RoadMaterialDropdownEnum.Asphalt;
-    public RoadMaterialDropdownEnum tRoadMaterialDropdownOLD = RoadMaterialDropdownEnum.Asphalt;
-
-	
-	public Material RoadMaterial1;
-	public Material RoadMaterial2;
-	public Material RoadMaterial3;
-	public Material RoadMaterial4;
-	public Material RoadMaterialMarker1;
-	public Material RoadMaterialMarker2;
-	public Material RoadMaterialMarker3;
-	public Material RoadMaterialMarker4;
-	public Material ShoulderMaterial1;
-	public Material ShoulderMaterial2;
-	public Material ShoulderMaterial3;
-	public Material ShoulderMaterial4;
-	public Material ShoulderMaterialMarker1;
-	public Material ShoulderMaterialMarker2;
-	public Material ShoulderMaterialMarker3;
-	public Material ShoulderMaterialMarker4;
-	
-	public PhysicMaterial RoadPhysicMaterial;
-	public PhysicMaterial ShoulderPhysicMaterial;
-	
 	#region "Road Construction"
 	[System.NonSerialized]
 	public GSD.Threaded.TerrainCalcs TerrainCalcsJob;
