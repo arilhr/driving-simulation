@@ -32,6 +32,11 @@ namespace DrivingSimulation
         private void GameEnd()
         {
             _setInputActiveCallback.Invoke(false);
+
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.OnGameEnd();
+            }
         }
 
         private void GameWin()

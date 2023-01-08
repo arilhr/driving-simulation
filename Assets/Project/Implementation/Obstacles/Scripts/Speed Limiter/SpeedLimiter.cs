@@ -7,7 +7,7 @@ using UnityEngine;
 namespace DrivingSimulation
 {
 
-    public class SpeedLimiter : MonoBehaviour, IObstacle
+    public class SpeedLimiter : MonoBehaviour
     {
         #region Variables
 
@@ -199,6 +199,11 @@ namespace DrivingSimulation
                 GlobalEvents.Instance.AddMistakeCallback.Invoke(VIOLATE_MAX_SPEED_MESSAGE, 1);
             }
 
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.ViolateMaxSpeed();
+            }
+
             OnViolate();
 
             _currentTimeBeetwenViolateMaxLimit = _timeBetweenViolate;
@@ -227,6 +232,11 @@ namespace DrivingSimulation
                 GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
                 GlobalEvents.Instance.AddMistakeCallback.Invoke(VIOLATE_MIN_SPEED_MESSAGE, 1);
+            }
+
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.ViolateMinSpeed();
             }
 
             OnViolate();

@@ -6,7 +6,7 @@ namespace DrivingSimulation
 {
     public class StopSignTrigger : MonoBehaviour
     {
-        private const string CROSS_STOP_SIGN_KEY = "Crossing Stop Sign!";
+        private const string CROSS_STOP_SIGN_MESSAGE = "Crossing Stop Sign!";
 
         private bool _playerComeFromFront = false;
         private bool _alreadyPassed = false;
@@ -58,31 +58,42 @@ namespace DrivingSimulation
             _alreadyPassed = true;
             _isSuccess = true;
 
-            if (GlobalEvents.Instance == null) return;
+            if (GlobalEvents.Instance != null)
+            {
+                // Notification
+                GlobalEvents.Instance.SetNotificationCallback.Invoke(CROSS_STOP_SIGN_MESSAGE, (int)NotificationType.Success);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            // Notification
-            GlobalEvents.Instance.SetNotificationCallback.Invoke("Stop Sign!", (int)NotificationType.Success);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                // Points
+                GlobalEvents.Instance.AddPointCallback.Invoke(10);
+            }
 
-            // Points
-            GlobalEvents.Instance.AddPointCallback.Invoke(10);
+            // Add to persona dataset
+            if (InGamePersonaDatasetManager.Instance != null)
+                InGamePersonaDatasetManager.Instance.WrongStopSign();
         }
 
         private void Failed()
         {
             _alreadyPassed = true;
 
-            if (GlobalEvents.Instance == null) return;
+            if (GlobalEvents.Instance != null)
+            {
+                // Notification
+                GlobalEvents.Instance.SetNotificationCallback.Invoke(CROSS_STOP_SIGN_MESSAGE, (int)NotificationType.Danger);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            // Notification
-            GlobalEvents.Instance.SetNotificationCallback.Invoke("Stop Sign!", (int)NotificationType.Danger);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                // Points
+                GlobalEvents.Instance.AddPointCallback.Invoke(-10);
 
-            // Points
-            GlobalEvents.Instance.AddPointCallback.Invoke(-10);
+                if (GlobalEvents.Instance.AddMistakeCallback != null)
+                    GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSS_STOP_SIGN_MESSAGE, 1);
+            }
 
-            if (GlobalEvents.Instance.AddMistakeCallback != null)
-                GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSS_STOP_SIGN_KEY, 1);
+
+            // Add to persona dataset
+            if (InGamePersonaDatasetManager.Instance != null)
+                InGamePersonaDatasetManager.Instance.WrongStopSign();
         }
 
 #if UNITY_EDITOR

@@ -17,6 +17,8 @@ namespace DrivingSimulation
         private float _lastExitTime = 0;
         private float _currentViolatedTime = 0f;
 
+        private GSDRoad _parentRoad = null;
+
         private void Awake()
         {
             transform.TryGetComponent(out Rigidbody rb);
@@ -26,6 +28,8 @@ namespace DrivingSimulation
                 Rigidbody newRb = gameObject.AddComponent<Rigidbody>();
                 newRb.isKinematic = true;   
             }
+
+            _parentRoad = transform.parent.parent.parent.GetComponent<GSDRoad>();
         }
 
         private void Update()
@@ -74,15 +78,21 @@ namespace DrivingSimulation
 
         private void Violated()
         {
-            if (GlobalEvents.Instance == null) return;
+            if (GlobalEvents.Instance != null)
+            {
 
-            GlobalEvents.Instance.SetNotificationCallback.Invoke("Wrong Lane!", (int)NotificationType.Danger);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                GlobalEvents.Instance.SetNotificationCallback.Invoke("Wrong Lane!", (int)NotificationType.Danger);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            GlobalEvents.Instance.AddPointCallback.Invoke(-10);
+                GlobalEvents.Instance.AddPointCallback.Invoke(-10);
 
-            if (GlobalEvents.Instance.AddMistakeCallback != null)
                 GlobalEvents.Instance.AddMistakeCallback.Invoke(WRONG_LANE_KEY, 1);
+            }
+
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.WrongLane(_parentRoad.opt_LaneWidth);
+            }
         }
     }
 }

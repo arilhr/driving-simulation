@@ -1155,6 +1155,7 @@ GameObject:
   - component: {fileID: 1928135258}
   - component: {fileID: 728954881012303181}
   - component: {fileID: 7807322617001204630}
+  - component: {fileID: 1950540200}
   m_Layer: 6
   m_Name: Car
   m_TagString: Untagged
@@ -1735,6 +1736,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 244a038c53f10c644acb49c637910f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!114 &1928135256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1812,7 +1816,21 @@ MonoBehaviour:
   _addPointCallback: {fileID: 11400000, guid: f319a45e6d6d9ca4bb7f52d20acc9334, type: 2}
   _currentTimeBeetwenViolateMaxLimit: 0
   _currentTimeBeetwenViolateMinLimit: 0
-  _canViolated: 1
+  _isMaxViolated: 0
+  _isMinViolated: 0
+--- !u!114 &1950540200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305744416550480595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e4b888c4e966c5478ee92a721705a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onSetFinishLine: {fileID: 11400000, guid: 401653d6bc139a047b8e79b580918a2f, type: 2}
 --- !u!1 &4305744416819254936
 GameObject:
   m_ObjectHideFlags: 0

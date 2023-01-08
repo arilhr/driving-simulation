@@ -9,9 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7120501532103595907}
+  - component: {fileID: 1285172997945298294}
   - component: {fileID: 7120501532103595906}
   - component: {fileID: 7120501532103595905}
   - component: {fileID: 7120501532103595904}
+  - component: {fileID: 821310019}
   m_Layer: 0
   m_Name: Game System
   m_TagString: Untagged
@@ -34,6 +36,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1285172997945298294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd833e357ea6ca545a0ab495c21e32cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameWinCallback: {fileID: 11400000, guid: 1657ac7ca70635d4cb111f0faaf591f6, type: 2}
+  _gameLostCallback: {fileID: 11400000, guid: 420ebd75b9d090445b72e927bdd846ce, type: 2}
+  _setInputActiveCallback: {fileID: 11400000, guid: d2796ab8384344d43b57614cd211e687, type: 2}
 --- !u!114 &7120501532103595906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,3 +98,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _addMistakeCallback: {fileID: 11400000, guid: cc2b956d88c5e0d438ae51762cb6b2d6, type: 2}
+--- !u!114 &821310019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7120501532103595909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf9b5961d961d74891934111397528f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gamePersonaDataset:
+    WrongStopSign: 0
+    CorrectStopSign: 0
+    WrongTrafficLight: 0
+    CorrectTrafficLight: 0
+    PassMaxSpeed: 0
+    ViolateMaxSpeed: 0
+    RoadSize: 0
+    WrongLane: 0
+    LongRoad: 0
+    Crash: 0
+    WrongIndicator: 0
+    CorrectIndicator: 0
+    TotalIntersect: 0

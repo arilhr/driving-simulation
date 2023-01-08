@@ -132,27 +132,39 @@ namespace DrivingSimulation
 
         private void CorrectBlinker()
         {
-            if (GlobalEvents.Instance == null) return;
+            if (GlobalEvents.Instance != null)
+            {
+                // Notification
+                GlobalEvents.Instance.SetNotificationCallback.Invoke(CORRECT_MESSAGE, (int)NotificationType.Success);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            // Notification
-            GlobalEvents.Instance.SetNotificationCallback.Invoke(CORRECT_MESSAGE, (int)NotificationType.Success);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                // Points
+                GlobalEvents.Instance.AddPointCallback.Invoke(10);
+            }
 
-            // Points
-            GlobalEvents.Instance.AddPointCallback.Invoke(10);
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.CorrectIndicator();
+            }
         }
 
         private void FalseBlinker()
         {
-            if (GlobalEvents.Instance == null) return;
+            if (GlobalEvents.Instance != null)
+            {
+                // Notification
+                GlobalEvents.Instance.SetNotificationCallback.Invoke(FALSE_MESSAGE, (int)NotificationType.Danger);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            // Notification
-            GlobalEvents.Instance.SetNotificationCallback.Invoke(FALSE_MESSAGE, (int)NotificationType.Danger);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+                // Points
+                GlobalEvents.Instance.AddPointCallback.Invoke(-10);
+                GlobalEvents.Instance.AddMistakeCallback.Invoke(FALSE_MESSAGE, 1);
+            }
 
-            // Points
-            GlobalEvents.Instance.AddPointCallback.Invoke(-10);
-            GlobalEvents.Instance.AddMistakeCallback.Invoke(FALSE_MESSAGE, 1);
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.WrongIndicator();
+            }
         }
     }
 }

@@ -1,0 +1,34 @@
+{
+  "pastGamesPersonaData": [
+    {
+      "WrongStopSign": 2.0,
+      "CorrectStopSign": 0.0,
+      "WrongTrafficLight": 0.0,
+      "CorrectTrafficLight": 0.0,
+      "PassMaxSpeed": 0.0,
+      "ViolateMaxSpeed": 0.0,
+      "RoadSize": 0.0,
+      "WrongLane": 0.0,
+      "LongRoad": 1420.1839599609375,
+      "Crash": 0.0,
+      "WrongIndicator": 1.0,
+      "CorrectIndicator": 1.0,
+      "TotalIntersect": 0.0
+    }
+  ],
+  "personaDatasetAverage": {
+    "WrongStopSign": 1.0,
+    "CorrectStopSign": 0.0,
+    "WrongTrafficLight": 0.0,
+    "CorrectTrafficLight": 0.0,
+    "PassMaxSpeed": 0.0,
+    "ViolateMaxSpeed": 0.0,
+    "RoadSize": 0.0,
+    "WrongLane": 0.0,
+    "LongRoad": 710.0919799804688,
+    "Crash": 0.0,
+    "WrongIndicator": 0.5,
+    "CorrectIndicator": 0.0,
+    "TotalIntersect": 0.0
+  }
+}

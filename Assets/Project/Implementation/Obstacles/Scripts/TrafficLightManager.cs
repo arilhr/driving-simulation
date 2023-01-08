@@ -7,7 +7,7 @@ namespace DrivingSimulation
 {
     public class TrafficLightManager : MonoBehaviour
     {
-        private const string CROSSING_WRONG_LIGHT_KEY = "Crossing Wrong Light!";
+        private const string CROSSING_WRONG_LIGHT_MESSAGE = "Crossing Wrong Light!";
 
         private enum LightType { None, Red, Yellow, Green }
 
@@ -84,23 +84,35 @@ namespace DrivingSimulation
 
         private void Success()
         {
-            GlobalEvents.Instance.SetNotificationCallback.Invoke("Green Light Crossing!", (int)NotificationType.Success);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+            if (GlobalEvents.Instance != null)
+            {
+                GlobalEvents.Instance.SetNotificationCallback.Invoke("Green Light Crossing!", (int)NotificationType.Success);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            if (GlobalEvents.Instance.AddPointCallback != null)
                 GlobalEvents.Instance.AddPointCallback.Invoke(20);
+            }
+
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.CorrectTrafficLight();
+            }
         }
 
         private void Failed()
         {
-            GlobalEvents.Instance.SetNotificationCallback.Invoke("You crossing the red light!", (int)NotificationType.Danger);
-            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+            if (GlobalEvents.Instance != null)
+            {
+                GlobalEvents.Instance.SetNotificationCallback.Invoke("You crossing the red light!", (int)NotificationType.Danger);
+                GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
 
-            if (GlobalEvents.Instance.AddPointCallback != null)
                 GlobalEvents.Instance.AddPointCallback.Invoke(-20);
+                GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSSING_WRONG_LIGHT_MESSAGE, 1);
+            }
 
-            if (GlobalEvents.Instance.AddMistakeCallback != null)
-                GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSSING_WRONG_LIGHT_KEY, 1);
+            if (InGamePersonaDatasetManager.Instance != null)
+            {
+                InGamePersonaDatasetManager.Instance.WrongTrafficLight();
+            }
         }
 
         private void OnDrawGizmos()
