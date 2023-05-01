@@ -24,6 +24,9 @@ namespace DrivingSimulation
         [SerializeField] private UI_PersonaData _nextChallengePersonaDataUI = null;
         [SerializeField] private UI_ChallengeData _nextChallengeChallengeDataUI = null;
 
+        [Header("References")]
+        [SerializeField] private AutomaticGenerateRoad roadGenerator = null;
+
         private List<ChallengeGeneratedData> _challengeListOrder = new();
         private Dictionary<ChallengeGeneratedData, PersonaDataset> _personaDatasetLists = new();
 
@@ -38,6 +41,7 @@ namespace DrivingSimulation
         private List<UI_ChallengePersonaGroup> _challengeListUIs = new();
 
         private int _maxPastChallenge = 5;
+        private bool isRoadAlreadyGenerated = false;
 
         #endregion
 
@@ -155,7 +159,41 @@ namespace DrivingSimulation
             _personaDatasetNextChallenge = GeneratePersonaData(_nextChallengeGenerated);
 
             AddPersonaData(_nextChallengeGenerated, _personaDatasetNextChallenge);
+
+            isRoadAlreadyGenerated = false;
+
             UpdateNextChallengeUI();
+        }
+
+        private void GenerateNewestChallengeLevel()
+        {
+            if (_nextChallengeGenerated.LongRoad == 0)
+            {
+                Debug.Log($"<color=red>[NULL]</color>Next Challenge Data is Null");
+                return;
+            }
+
+            if (isRoadAlreadyGenerated)
+                return;
+
+            isRoadAlreadyGenerated = true;
+
+            roadGenerator.roadLength = _nextChallengeGenerated.LongRoad / 10f;
+            roadGenerator.roadWidth = _nextChallengeGenerated.RoadSize / 10f;
+            roadGenerator.turns = Mathf.RoundToInt(_nextChallengeGenerated.TotalTurn);
+            roadGenerator.intersections = Mathf.RoundToInt(_nextChallengeGenerated.TotalIntersect);
+
+            roadGenerator.GenerateRoad();
+
+            // Get the center position of the road generator object object
+            Renderer[] rends = roadGenerator.GetComponentsInChildren<Renderer>();
+            Bounds b = rends[0].bounds;
+            for (int i = 1; i < rends.Length; i++)
+            {
+                b.Encapsulate(rends[i].bounds);
+            }
+
+            Camera.main.transform.position = new Vector3(b.center.x, 80f, b.center.z);
         }
 
         #endregion
@@ -213,6 +251,11 @@ namespace DrivingSimulation
         {
             _nextChallengeChallengeDataUI.Initialize(_nextChallengeGenerated);
             _nextChallengePersonaDataUI.Initialize(_personaDatasetNextChallenge);
+        }
+
+        public void GenerateNewestChallengeLevelCallback()
+        {
+            GenerateNewestChallengeLevel();
         }
 
         #endregion

@@ -44,10 +44,12 @@ namespace DrivingSimulation
     public class ChallengeGeneratorSystem
     {
         private static readonly int[] WRONG_LANE_POINT_CLASSIFICATION = { 0, 3, 5 };
-        private static readonly int[] ROAD_SIZE_CLASSIFICATION = { 10, 20, 30 }; // meter
+        private static readonly int[] ROAD_SIZE_CLASSIFICATION = { 20, 30, 40 }; // meter
         private static readonly int[] LONG_ROAD_CLASSIFICATION = { 1000, 1500, 2000, 3000 }; // meter
-        private static readonly float[] TOTAL_TURN_CLASSIFICATION = { 20, 30, 50 }; // percentage from long road
-        private static readonly int[] TOTAL_INTERSECTION_CLASSIFICATION = { 0, 3, 6, 8 };
+        private static readonly float TURN_PER_DISTANCE_MIN = 0;
+        private static readonly float TURN_PER_DISTANCE_MAX = 300;
+        private static readonly float[] TOTAL_TURN_CLASSIFICATION = { 0, 5, 10, 15 }; // percentage from long road
+        private static readonly int[] TOTAL_INTERSECTION_CLASSIFICATION = { 0, 1, 2, 4 };
 
         public static ChallengeGeneratedData GenerateChallenge(ChallengeGeneratedData challengeData, PersonaDataset personaData)
         {
@@ -71,6 +73,12 @@ namespace DrivingSimulation
 
             challengeGeneratedData.RoadSize = ROAD_SIZE_CLASSIFICATION[wrongLaneClassification];
             challengeGeneratedData.LongRoad = Random.Range(LONG_ROAD_CLASSIFICATION[wrongLaneClassification + 1], LONG_ROAD_CLASSIFICATION[wrongLaneClassification]);
+
+            // set turn lane perentage
+            int currentTurnLanePercentage = Mathf.RoundToInt(Random.Range(TOTAL_TURN_CLASSIFICATION[wrongLaneClassification + 1], TOTAL_TURN_CLASSIFICATION[wrongLaneClassification]));
+            float distancePerTurn = Random.Range(TURN_PER_DISTANCE_MIN, TURN_PER_DISTANCE_MAX);
+            int possibleTurnCount = Mathf.RoundToInt(challengeGeneratedData.LongRoad / distancePerTurn);
+            challengeGeneratedData.TotalTurn = Mathf.RoundToInt(currentTurnLanePercentage / 100f * possibleTurnCount);
 
             // DEFINE INTERSECTION AND THE OBSTACLE (STOP SIGN, TRAFFIC LIGHT)
 
