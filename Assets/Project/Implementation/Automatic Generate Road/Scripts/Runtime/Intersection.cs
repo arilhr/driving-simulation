@@ -6,12 +6,27 @@ using UnityEngine;
 
 public class Intersection : MonoBehaviour
 {
+    public enum StopType
+    {
+        None,
+        Stop,
+        TrafficLight
+    }
+
     [Header("Properties")]
     public PathCreator forward = null;
     public PathCreator left = null;
     public PathCreator right = null;
     public float roadWidth = 10f;
     public float initialRoadLength = 5f;
+    public StopType stopType = StopType.None;
+
+    [Header("Traffic Light")]
+    public TrafficLightManager trafficLightManager;
+    public TrafficLight trafficLightB;
+    public TrafficLight trafficLightF;
+    public TrafficLight trafficLightR;
+    public TrafficLight trafficLightL;
 
     [Header("Material")]
     public Material LRMaterial;
@@ -20,7 +35,7 @@ public class Intersection : MonoBehaviour
     public Material LRFMaterial;
 
     [Header("Debug")]
-    public float anchorRadius = 5f;
+    public float anchorRadius = 1f;
 
     public void Initialize(bool right, bool forward, bool left)
     {
@@ -41,6 +56,46 @@ public class Intersection : MonoBehaviour
             Vector3 leftPos = transform.position - transform.right * (transform.localScale.x) + transform.forward * (transform.localScale.z);
             this.left = GeneratePath("Left", leftPos, -transform.right);
         }
+    }
+
+    public void Initialize(bool right, bool forward, bool left, StopType type)
+    {
+        Initialize(right, forward, left);
+
+        // Initialize Stop Type
+        if (type == StopType.TrafficLight)
+        {
+            InitializeTrafficLight(forward, right, left);
+        }
+    }
+
+    private void InitializeTrafficLight(bool f, bool r, bool l)
+    {
+        List<TrafficLight> trafficLightActive = new List<TrafficLight>();
+
+        trafficLightB.gameObject.SetActive(true);
+        trafficLightActive.Add(trafficLightB);
+
+        if (f)
+        {
+            trafficLightF.gameObject.SetActive(true);
+            trafficLightActive.Add(trafficLightF);
+        }
+
+        if (r)
+        {
+            trafficLightR.gameObject.SetActive(true);
+            trafficLightActive.Add(trafficLightR);
+        }
+
+        if (l)
+        {
+            trafficLightL.gameObject.SetActive(true);
+            trafficLightActive.Add(trafficLightL);
+        }
+
+        float interval = Random.Range(5f, 10f);
+        trafficLightManager.Initialize(interval, trafficLightActive);
     }
 
     private PathCreator GeneratePath(string name, Vector3 position, Vector3 direction)
@@ -115,7 +170,7 @@ public class Intersection : MonoBehaviour
         Gizmos.DrawSphere(transform.position, anchorRadius);
         if (forward) Gizmos.DrawSphere(transform.position + transform.forward * (transform.localScale.z * 2), anchorRadius);
         if (right) Gizmos.DrawSphere(transform.position + transform.right * (transform.localScale.x) + transform.forward * (transform.localScale.z), anchorRadius);
-        if (left) Gizmos.DrawSphere(transform.position - transform.right * (transform.localScale.x) + transform.forward * (transform.localScale.z), anchorRadius + 1f);
+        if (left) Gizmos.DrawSphere(transform.position - transform.right * (transform.localScale.x) + transform.forward * (transform.localScale.z), anchorRadius);
     }
 #endif
 }

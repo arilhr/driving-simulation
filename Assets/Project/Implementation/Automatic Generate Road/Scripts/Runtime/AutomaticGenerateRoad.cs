@@ -60,6 +60,7 @@ public class AutomaticGenerateRoad : MonoBehaviour
         {
             int roadIndex = 0;
             int turnsRemaining = turns;
+            int lastIntersectDirection = -1;
             float latestIntersectionPoint = 0f;
             float maxDistanceIntersection = (roadLength - (minDistanceIntersection * 2)) / intersections;
             if (debug)
@@ -150,18 +151,20 @@ public class AutomaticGenerateRoad : MonoBehaviour
                     intersectionObj.AddComponent<Intersection>();
 
                 intersection.roadWidth = roadWidth;
-                intersection.Initialize(true, true, true);
+                intersection.Initialize(true, true, true, Intersection.StopType.TrafficLight);
 
                 if (debug)
                     Debug.Log($"<color=yellow><b>[GENERATE INTERSECTION {i}]</b></color> | P: {intersectionPos}");
 
                 // GENERATE PATH AFTER INTERSECTION
                 // next path 0: right, 1: forward, 2: left
-                int nextPathDirection = Random.Range(0, 3);
                 PathCreator nextPathCreator = null;
+                int nextPathDirection = Random.Range(0, 3);
+                while (nextPathDirection == lastIntersectDirection) nextPathDirection = Random.Range(0, 3);
                 if (nextPathDirection == 0) nextPathCreator = intersection.right;
                 if (nextPathDirection == 1) nextPathCreator = intersection.forward;
                 if (nextPathDirection == 2) nextPathCreator = intersection.left;
+                lastIntersectDirection = nextPathDirection;
 
                 // SETUP LAST PATH
                 if (i == intersections - 1)

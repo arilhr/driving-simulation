@@ -5160,8 +5160,8 @@ namespace GSD.Roads{
 				triggerCollider.size = new Vector3(1f, InterDist, 10f);
 				triggerCollider.center = new Vector3(0f, InterDist / 2f, 5f);
 
-				// Add Light Manager
-				TrafficLightManager trafficManager = tObj.AddComponent<TrafficLightManager>();
+                // Add Light Manager
+                DrivingSimulation.TrafficLightManager trafficManager = tObj.AddComponent<DrivingSimulation.TrafficLightManager>();
 				trafficManager.Initialize();
 
 				if(bScale){ tLanes[i].transform.localScale = tScale; }

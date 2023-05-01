@@ -2,16 +2,14 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 8
+  serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: GSDTrafficLightMain
-  m_Shader: {fileID: 13, guid: 0000000000000000f000000000000000, type: 0}
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: TrafficLightPole
+  m_Shader: {fileID: 4, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -25,8 +23,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: bd90708b43c806247966d5bc32e27b30, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 9fb228cfb3cd6cb42993d8a2c1360fd7, type: 3}
+        m_Scale: {x: 8, y: 8}
         m_Offset: {x: 0, y: 0}
     - _Cube:
         m_Texture: {fileID: 0}
@@ -52,10 +50,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Illum:
-        m_Texture: {fileID: 2800000, guid: 059d41c3da9c6694fba19836f5e16037, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0.667, y: 0}
     - _LeftTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -65,8 +59,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 059d41c3da9c6694fba19836f5e16037, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: e9eb9b784ddb08f498aae6ea58b21f69, type: 3}
+        m_Scale: {x: 8, y: 8}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 2800000, guid: 8819b043606e3414788116f3cd4f8b2c, type: 3}
@@ -92,13 +86,9 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    m_Ints: []
     m_Floats:
-    - _BumpAmt: 10
     - _DecalColoring: 0.5
     - _EdgeLength: 10
-    - _Emission: 1
-    - _EmissionLM: 0
     - _FrezFalloff: 4
     - _FrezPow: 0
     - _Gloss: 0
@@ -108,12 +98,12 @@ Material:
     - _Parallax: 0.01619403
     - _Reflection: 0
     - _ShadowIntensity: 0.7044776
-    - _Shininess: 1
+    - _Shininess: 0.07378621
     - _Sparkle: 0.01
     - _SquashAmount: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 0}
-    - _Emission: {r: 1, g: 1, b: 1, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _GridColor: {r: 0, g: 0, b: 0, a: 0}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
     - _LineColor: {r: 1, g: 1, b: 1, a: 1}
@@ -123,4 +113,3 @@ Material:
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecularColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
-  m_BuildTextureStacks: []
