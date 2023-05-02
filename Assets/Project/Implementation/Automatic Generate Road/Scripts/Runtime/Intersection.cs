@@ -28,6 +28,9 @@ public class Intersection : MonoBehaviour
     public TrafficLight trafficLightR;
     public TrafficLight trafficLightL;
 
+    [Header("Stop Sign")]
+    public List<GameObject> stopSigns;
+
     [Header("Material")]
     public Material LRMaterial;
     public Material RFMaterial;
@@ -67,6 +70,11 @@ public class Intersection : MonoBehaviour
         {
             InitializeTrafficLight(forward, right, left);
         }
+
+        if (type == StopType.Stop)
+        {
+            InitializeStopSign(forward, right, left);
+        }
     }
 
     private void InitializeTrafficLight(bool f, bool r, bool l)
@@ -94,8 +102,17 @@ public class Intersection : MonoBehaviour
             trafficLightActive.Add(trafficLightL);
         }
 
-        float interval = Random.Range(5f, 10f);
+        float interval = Mathf.CeilToInt(Random.Range(5f, 10f));
         trafficLightManager.Initialize(interval, trafficLightActive);
+    }
+
+    private void InitializeStopSign(bool f, bool r, bool l)
+    {
+        stopSigns[0].SetActive(true);
+
+        if (l) stopSigns[1].SetActive(true);
+        if (f) stopSigns[2].SetActive(true);
+        if (r) stopSigns[3].SetActive(true);
     }
 
     private PathCreator GeneratePath(string name, Vector3 position, Vector3 direction)

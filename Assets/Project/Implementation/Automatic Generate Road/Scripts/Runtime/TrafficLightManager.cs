@@ -11,8 +11,6 @@ public class TrafficLightManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"{interval} | {trafficLights.Count}");
-
         if (interval > 0 && trafficLights.Count > 0)
         {
             StartCoroutine(StartCount());
@@ -27,7 +25,6 @@ public class TrafficLightManager : MonoBehaviour
 
     private IEnumerator StartCount()
     {
-        Debug.Log($"Start Traffic Light: {interval}");
         isRun = true;
 
         while (isRun)

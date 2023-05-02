@@ -151,7 +151,8 @@ public class AutomaticGenerateRoad : MonoBehaviour
                     intersectionObj.AddComponent<Intersection>();
 
                 intersection.roadWidth = roadWidth;
-                intersection.Initialize(true, true, true, Intersection.StopType.TrafficLight);
+                Intersection.StopType intersectionType = Utils.GetRandomEnumValue<Intersection.StopType>();
+                intersection.Initialize(true, true, true, intersectionType);
 
                 if (debug)
                     Debug.Log($"<color=yellow><b>[GENERATE INTERSECTION {i}]</b></color> | P: {intersectionPos}");
