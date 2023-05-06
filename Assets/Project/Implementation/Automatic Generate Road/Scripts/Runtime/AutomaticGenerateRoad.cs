@@ -29,6 +29,10 @@ public class AutomaticGenerateRoad : MonoBehaviour
     public int intersections = 0;
     public float minDistanceIntersection = 100f;
 
+    [Header("Start/End Point")]
+    public Vector3 startPoint;
+    public Vector3 endPoint;
+
     [Serializable]
     struct PathData
     {
@@ -63,14 +67,16 @@ public class AutomaticGenerateRoad : MonoBehaviour
             int lastIntersectDirection = -1;
             float latestIntersectionPoint = 0f;
             float maxDistanceIntersection = (roadLength - (minDistanceIntersection * 2)) / intersections;
+
             if (debug)
-                Debug.Log($"<color=yellow><b>[MAX INTERSECTION DISTANCE]</b></color> {maxDistanceIntersection}");
+                Debug.Log($"<color=green><b>[MAX INTERSECTION DISTANCE]</b></color> {maxDistanceIntersection}");
+
             for (int i = 0; i < intersections; i++)
             {
                 float intersectionPoint = Random.Range(latestIntersectionPoint + minDistanceIntersection, latestIntersectionPoint + maxDistanceIntersection);
 
                 if (debug)
-                    Debug.Log($"<color=yellow><b>[INTERSECTION POINT]</b></color> {intersectionPoint}");
+                    Debug.Log($"<color=green><b>[INTERSECTION POINT]</b></color> {intersectionPoint}");
 
                 // GENERATE OR SETUP PATH BEFORE
                 if (i == 0)
@@ -85,11 +91,12 @@ public class AutomaticGenerateRoad : MonoBehaviour
                         length, 
                         turn, 
                         GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance), 
-                        GetRandomTurnLength(turn, minTurnLength, maxTurnLength)
+                        GetRandomTurnLength(turn, minTurnLength, maxTurnLength),
+                        true
                     );
 
                     if (debug)
-                        Debug.Log($"<color=yellow><b>[GENERATE FIRST INTERSECTION PATH]</b></color> | L: {length} | T: {turn}");
+                        Debug.Log($"<color=green><b>[GENERATE FIRST INTERSECTION PATH]</b></color> | L: {length} | T: {turn}");
 
                     turnsRemaining -= turn;
 
@@ -112,7 +119,7 @@ public class AutomaticGenerateRoad : MonoBehaviour
                     SetupPath(pathBefore, length, turn, randomTurnDistance, randomTurnLength);
 
                     if (debug)
-                        Debug.Log($"<color=yellow><b>[SETUP PATH BEFORE {i}]</b></color> | L: {length} | T: {turn}");
+                        Debug.Log($"<color=green><b>[SETUP PATH BEFORE {i}]</b></color> | L: {length} | T: {turn}");
 
                     turnsRemaining -= turn;
                 }
@@ -230,7 +237,7 @@ public class AutomaticGenerateRoad : MonoBehaviour
         return pathCreator;
     }
 
-    private void SetupPath(PathCreator pathCreator, float length, int turns, float turnDistance, float turnLength)
+    private void SetupPath(PathCreator pathCreator, float length, int turns, float turnDistance, float turnLength, bool isStart = false)
     {
         // Initialize Path Creator
         pathCreator.InitializeEditorData(false);
@@ -242,7 +249,13 @@ public class AutomaticGenerateRoad : MonoBehaviour
         // set path creator bezier control mode to automatic
         bp.ControlPointMode = BezierPath.ControlMode.Automatic;
         bp.SetPoint(0, Vector3.zero);
-        bp.SetPoint(bp.NumPoints - 1, Vector3.forward);
+        bp.SetPoint(bp.NumPoints - 1, isStart ? Vector3.forward * 50f : Vector3.forward);
+
+        // get start point
+        if (isStart)
+        {
+            startPoint = (Vector3.forward * 50f) + (Vector3.left * roadWidth / 4f);
+        }
 
         // get init anchor points
         for (int i = 0; i < bp.NumPoints; i += 3)
@@ -348,7 +361,11 @@ public class AutomaticGenerateRoad : MonoBehaviour
 #if UNITY_EDITOR
     public void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(startPoint, 1f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(endPoint, 1f);
     }
 #endif
 }
