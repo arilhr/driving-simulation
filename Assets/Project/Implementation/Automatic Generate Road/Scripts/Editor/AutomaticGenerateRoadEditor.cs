@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(AutomaticGenerateRoad))]
-public class AutomaticGenerateRoadEditor : Editor
+namespace DrivingSimulation
 {
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(AutomaticGenerateRoad))]
+    public class AutomaticGenerateRoadEditor : Editor
     {
-        base.OnInspectorGUI();
-
-        AutomaticGenerateRoad automaticGenerateRoad = (AutomaticGenerateRoad)target;
-
-        if (GUILayout.Button("Generate Road"))
+        public override void OnInspectorGUI()
         {
-            automaticGenerateRoad.GenerateRoad();
-        }
+            base.OnInspectorGUI();
 
-        if (GUILayout.Button("Clear Road"))
-        {
-            automaticGenerateRoad.ResetData();
+            AutomaticGenerateRoad automaticGenerateRoad = (AutomaticGenerateRoad)target;
+
+            if (GUILayout.Button("Generate Road"))
+            {
+                automaticGenerateRoad.GenerateRoad();
+            }
+
+            if (GUILayout.Button("Clear Road"))
+            {
+                automaticGenerateRoad.ResetData();
+            }
         }
     }
 }

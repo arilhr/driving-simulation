@@ -138,6 +138,7 @@ public class Intersection : MonoBehaviour
         RoadMeshCreator roadMeshCreator = path.AddComponent<RoadMeshCreator>();
         roadMeshCreator.roadWidth = roadWidth;
         roadMeshCreator.pathCreator = pathCreator;
+        roadMeshCreator.isRightAreaColliderActive = true;
         roadMeshCreator.flattenSurface = true;
         roadMeshCreator.TriggerUpdate();
 

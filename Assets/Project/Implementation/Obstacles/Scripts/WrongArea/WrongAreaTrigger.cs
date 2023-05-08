@@ -29,7 +29,7 @@ namespace DrivingSimulation
                 newRb.isKinematic = true;   
             }
 
-            _parentRoad = transform.parent.parent.parent.GetComponent<GSDRoad>();
+            //_parentRoad = transform.parent.parent.parent.GetComponent<GSDRoad>();
         }
 
         private void Update()
@@ -91,7 +91,7 @@ namespace DrivingSimulation
 
             if (InGamePersonaDatasetManager.Instance != null)
             {
-                InGamePersonaDatasetManager.Instance.WrongLane(_parentRoad.opt_LaneWidth);
+                //InGamePersonaDatasetManager.Instance.WrongLane(_parentRoad.opt_LaneWidth);
             }
         }
     }

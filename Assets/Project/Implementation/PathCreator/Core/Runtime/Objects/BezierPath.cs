@@ -126,6 +126,11 @@ namespace PathCreation {
             }
         }
 
+        public List<Vector3> GetPoints()
+        {
+            return points;
+        }
+
         /// Get world space position of point
         public Vector3 GetPoint (int i) {
             return points[i];
