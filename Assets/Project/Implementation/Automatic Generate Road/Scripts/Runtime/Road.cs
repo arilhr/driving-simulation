@@ -7,14 +7,29 @@ namespace DrivingSimulation
     public class Road : MonoBehaviour
     {
         [Header("Road Area")]
-        public GameObject LeftAreaColliderObj;
-        public GameObject RightAreaColliderObj;
+        GameObject leftAreaColliderObj;
+        GameObject rightAreaColliderObj;
 
-        private void Awake()
+        public GameObject LeftAreaColliderObj
         {
-            if (RightAreaColliderObj != null)
+            get { return leftAreaColliderObj; }
+            set
             {
-                RightAreaColliderObj.AddComponent<WrongAreaTrigger>();
+                leftAreaColliderObj = value;
+            }
+        }
+
+        public GameObject RightAreaColliderObj
+        {
+            get { return rightAreaColliderObj; }
+            set
+            {
+                rightAreaColliderObj = value;
+
+                if (!rightAreaColliderObj.TryGetComponent(out WrongAreaTrigger trigger))
+                {
+                    rightAreaColliderObj.AddComponent<WrongAreaTrigger>();
+                }
             }
         }
     }

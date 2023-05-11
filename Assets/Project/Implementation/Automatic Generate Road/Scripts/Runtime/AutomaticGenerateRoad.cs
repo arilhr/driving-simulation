@@ -36,6 +36,8 @@ namespace DrivingSimulation
         [Header("Start/End Point")]
         public Vector3 startPoint;
         public Vector3 endPoint;
+        public GameObject barrierObject = null;
+        public GameObject finishAreaObj;
 
         [Header("Player")]
         public Player playerPrefabs;
@@ -55,6 +57,33 @@ namespace DrivingSimulation
         [SerializeField]
         private List<Intersection> intersectionDatas = new();
 
+        private float latestLeftTurnDegree = 0f;
+        private float latestRightTurnDegree = 0f;
+
+        public float LatestLeftTurnDegree
+        {
+            get { return latestLeftTurnDegree; }
+            private set
+            {
+                latestLeftTurnDegree = value;
+
+                if (latestLeftTurnDegree > 0f)
+                    latestLeftTurnDegree = 0f;
+            }
+        }
+
+        public float LatestRightTurnDegree
+        {
+            get { return latestRightTurnDegree; }
+            private set
+            {
+                latestRightTurnDegree = value;
+
+                if (latestRightTurnDegree < 0f)
+                    latestRightTurnDegree = 0f;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -65,6 +94,8 @@ namespace DrivingSimulation
 
         public void ResetData()
         {
+            LatestLeftTurnDegree = 0;
+            LatestRightTurnDegree = 0;
             DestroyAllObject();
 
             pathDatas.Clear();
@@ -94,7 +125,7 @@ namespace DrivingSimulation
                     if (debug)
                         Debug.Log($"<color=green><b>[INTERSECTION POINT]</b></color> {intersectionPoint}");
 
-                    // GENERATE OR SETUP PATH BEFORE
+                    // GENERATE START PATH
                     if (i == 0)
                     {
                         PathCreator firstPath = GeneratePath($"Path {roadIndex}", Vector3.zero);
@@ -116,7 +147,7 @@ namespace DrivingSimulation
 
                         turnsRemaining -= turn;
 
-                        // add path to list
+                        // add start path to list
                         pathDatas.Add(new PathData
                         {
                             pathCreator = firstPath,
@@ -125,6 +156,7 @@ namespace DrivingSimulation
                     }
                     else
                     {
+                        // GENERATE NEXT PATH (AFTER INTERSECTION)
                         PathCreator pathBefore = pathDatas[^1].pathCreator;
 
                         float length = intersectionPoint - latestIntersectionPoint;
@@ -132,7 +164,9 @@ namespace DrivingSimulation
                         float randomTurnDistance = GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance);
                         float randomTurnLength = GetRandomTurnLength(turn, minTurnLength, maxTurnLength);
 
-                        SetupPath(pathBefore, length, turn, randomTurnDistance, randomTurnLength);
+                        float initialDegree = lastIntersectDirection == 0 ? 90f : lastIntersectDirection == 2 ? -90f : 0f;
+
+                        SetupPath(pathBefore, length, turn, randomTurnDistance, randomTurnLength, false, initialDegree);
 
                         if (debug)
                             Debug.Log($"<color=green><b>[SETUP PATH BEFORE {i}]</b></color> | L: {length} | T: {turn}");
@@ -183,14 +217,22 @@ namespace DrivingSimulation
                     // GENERATE PATH AFTER INTERSECTION
                     // next path 0: right, 1: forward, 2: left
                     PathCreator nextPathCreator = null;
-                    int nextPathDirection = Random.Range(0, 3);
-                    while (nextPathDirection == lastIntersectDirection) nextPathDirection = Random.Range(0, 3);
+                    List<int> nextDirectionIndex = new List<int>{ 0, 1, 2 };
+                    if (LatestRightTurnDegree > 90f)
+                        nextDirectionIndex.Remove(0);
+
+                    if (LatestLeftTurnDegree < -90f)
+                        nextDirectionIndex.Remove(2);
+
+                    int nextPathDirection = nextDirectionIndex[Random.Range(0, nextDirectionIndex.Count)];
+                    while (nextPathDirection == lastIntersectDirection) 
+                        nextPathDirection = nextDirectionIndex[Random.Range(0, nextDirectionIndex.Count)];
                     if (nextPathDirection == 0) nextPathCreator = intersection.right;
                     if (nextPathDirection == 1) nextPathCreator = intersection.forward;
                     if (nextPathDirection == 2) nextPathCreator = intersection.left;
                     lastIntersectDirection = nextPathDirection;
 
-                    // SETUP LAST PATH
+                    // SETUP LAST PATH (AFTER INTERSECTION)
                     if (i == intersections - 1)
                     {
                         float length = roadLength - latestIntersectionPoint > 0 ? roadLength - latestIntersectionPoint : 0;
@@ -198,6 +240,9 @@ namespace DrivingSimulation
                         float randomTurnLength = GetRandomTurnLength(turnsRemaining, minTurnLength, maxTurnLength);
 
                         SetupPath(nextPathCreator, length, turnsRemaining, randomTurnDistance, randomTurnLength);
+
+                        // spawn finish area
+                        SpawnFinishArea(nextPathCreator);
                     }
 
                     pathDatas.Add(new PathData
@@ -219,7 +264,8 @@ namespace DrivingSimulation
                     roadLength,
                     turns,
                     GetRandomTurnDistance(turns, minTurnDistance, maxTurnDistance),
-                    GetRandomTurnLength(turns, minTurnLength, maxTurnLength)
+                    GetRandomTurnLength(turns, minTurnLength, maxTurnLength),
+                    true
                 );
 
                 if (debug)
@@ -231,6 +277,8 @@ namespace DrivingSimulation
                     pathCreator = path,
                     roadMeshCreator = path.GetComponent<RoadMeshCreator>()
                 });
+
+                SpawnFinishArea(path);
             }
 
             SpawnPlayer();
@@ -247,13 +295,18 @@ namespace DrivingSimulation
             roadMeshCreator.roadWidth = roadWidth;
             roadMeshCreator.flattenSurface = true;
             roadMeshCreator.isRightAreaColliderActive = true;
+            roadMeshCreator.isLeftRailingActive = true;
+            roadMeshCreator.isRightRailingActive = true;
             roadMeshCreator.pathCreator = pathCreator;
 
             return pathCreator;
         }
 
-        private void SetupPath(PathCreator pathCreator, float length, int turns, float turnDistance, float turnLength, bool isStart = false)
+        private void SetupPath(PathCreator pathCreator, float length, int turns, float turnDistance, float turnLength, bool isStart = false, float initialDegree = 0f)
         {
+            LatestLeftTurnDegree += initialDegree;
+            LatestRightTurnDegree += initialDegree;
+
             // Initialize Path Creator
             pathCreator.InitializeEditorData(false);
             pathCreator.EditorData.ResetBezierPath(pathCreator.transform.position);
@@ -270,6 +323,18 @@ namespace DrivingSimulation
             if (isStart)
             {
                 startPoint = (Vector3.forward * 50f) + (Vector3.left * roadWidth / 2f);
+
+                // spawn start barrier
+                GameObject startBarrier = Instantiate(barrierObject, transform);
+                startBarrier.name = "Start Barrier";
+
+                if (!startBarrier.TryGetComponent(out RepeatedObject startRepeatedObj))
+                    startRepeatedObj = startBarrier.AddComponent<RepeatedObject>();
+
+                startRepeatedObj.transform.localPosition = Vector3.forward * 20f;
+
+                startRepeatedObj.width = roadWidth * 2f;
+                startRepeatedObj.Build();
             }
 
             // get init anchor points
@@ -309,9 +374,23 @@ namespace DrivingSimulation
                 float randLength = i == turns - 1 ? minTurnLength + turnLengthOffset : Random.Range(minTurnLength, minTurnLength + turnLengthOffset);
                 turnLengthOffset -= (randLength - minTurnLength);
 
+                int totalTurnSegments = 2;
                 float turnDegree = Random.Range(minTurnDegree, maxTurnDegree);
                 float totalTurnDegree = Random.Range(0, 2) == 0 ? -turnDegree : turnDegree;
-                int totalTurnSegments = 2;
+
+                if (LatestRightTurnDegree + turnDegree > 180f)
+                {
+                    totalTurnDegree = -turnDegree;
+                }
+
+                if (LatestLeftTurnDegree - turnDegree < -180f)
+                {
+                    totalTurnDegree = turnDegree;
+                }
+
+                LatestLeftTurnDegree += totalTurnDegree;
+                LatestRightTurnDegree += totalTurnDegree;
+
                 for (int j = 0; j < totalTurnSegments; j++)
                 {
                     lastForward = (Quaternion.AngleAxis(totalTurnDegree / 2f, Vector3.up) * lastForward).normalized;
@@ -343,6 +422,39 @@ namespace DrivingSimulation
             roadMeshCreator.TriggerUpdate();
         }
 
+
+        private void SpawnFinishArea(PathCreator path)
+        {
+            // spawn finish area
+            Vector3 lastPoint1 = Quaternion.AngleAxis(path.transform.localEulerAngles.y, Vector3.up) * path.bezierPath.GetAnchorPoint(path.bezierPath.NumAnchorPoints - 1);
+            Vector3 lastPoint2 = Quaternion.AngleAxis(path.transform.localEulerAngles.y, Vector3.up) * path.bezierPath.GetAnchorPoint(path.bezierPath.NumAnchorPoints - 2);
+
+            Vector3 lastDirection = (lastPoint2 - lastPoint1).normalized;
+
+            GameObject finishAreaSpawned = Instantiate(finishAreaObj, transform);
+            Vector3 finishPos = path.transform.position + lastPoint1 + (lastDirection * 50f) - (Vector3.Cross(lastDirection, Vector3.up) * roadWidth / 2f);
+            Quaternion finishRot = Quaternion.FromToRotation(finishAreaSpawned.transform.forward, lastDirection);
+
+            finishAreaSpawned.transform.localPosition = finishPos;
+            finishAreaSpawned.transform.rotation = finishRot;
+
+            // spawn barrier
+            Vector3 finishBarrierPos = path.transform.position + lastPoint1 + (lastDirection * 20f);
+
+            // spawn finish barrier
+            GameObject finishBarrierObj = Instantiate(barrierObject, transform);
+            finishBarrierObj.name = "Finish Barrier";
+
+            if (!finishBarrierObj.TryGetComponent(out RepeatedObject finishRepeatedObj))
+                finishRepeatedObj = finishBarrierObj.AddComponent<RepeatedObject>();
+
+            finishRepeatedObj.transform.localPosition = finishBarrierPos;
+            finishRepeatedObj.transform.rotation = Quaternion.FromToRotation(finishBarrierObj.transform.forward, lastDirection);
+
+            finishRepeatedObj.width = roadWidth * 2f;
+            finishRepeatedObj.Build();
+        }
+
         private float GetRandomTurnDistance(int turns, float min, float max)
         {
             float minTurnDistanceAvg = min * turns;
@@ -371,15 +483,18 @@ namespace DrivingSimulation
 
         private void DestroyAllObject()
         {
-            foreach (Intersection intersection in intersectionDatas)
-            {
-                if (intersection) intersection.DestroyObject();
-            }
+            // Get all child objects of this game object
+            Transform[] children = GetComponentsInChildren<Transform>();
 
-            foreach (PathData data in pathDatas)
+            // Loop through each child and destroy it
+            foreach (Transform child in children)
             {
-                if (data.roadMeshCreator) DestroyImmediate(data.roadMeshCreator.MeshHolder);
-                if (data.pathCreator) DestroyImmediate(data.pathCreator.gameObject);
+                // Skip the parent object
+                if (child == transform) continue;
+                if (child == null) continue;
+
+                // Destroy the child object
+                DestroyImmediate(child.gameObject);
             }
         }
 

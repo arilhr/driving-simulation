@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using DrivingSimulation;
+using JetBrains.Annotations;
 using PathCreation.Utility;
+using TreeEditor;
 using UnityEngine;
 
 
@@ -18,11 +22,20 @@ namespace PathCreation.Examples {
         public bool autoTiling = true;
         public float textureTiling = 1;
 
+        [Header("Railing")]
+        public bool isLeftRailingActive = false;
+        public bool isRightRailingActive = false;
+        public float railingWidth = 1f;
+        public float railingHeight = 3f;
+        public Material railingMaterial;
+        private GameObject leftRailingHolder;
+        private GameObject rightRailingHolder;
+
         [Header("Additional Settings")]
         public bool isLeftAreaColliderActive = false;
         public bool isRightAreaColliderActive = false;
 
-        GameObject meshHolder;
+        public GameObject meshHolder;
 
         MeshFilter meshFilter;
         MeshRenderer meshRenderer;
@@ -41,6 +54,7 @@ namespace PathCreation.Examples {
                 CreateRoadMesh ();
                 CreateRoadLeftAreaCollider();
                 CreateRoadRightAreaCollider();
+                CreateRailingRoad();
             }
         }
 
@@ -184,7 +198,7 @@ namespace PathCreation.Examples {
                 leftAreaColliderMeshObj.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
                 leftAreaColliderMeshObj.transform.localScale = Vector3.one;
 
-                float height = 1f;
+                float height = 10f;
                 Vector3[] verts = new Vector3[16];
                 Vector3[] normals = new Vector3[verts.Length];
 
@@ -313,7 +327,7 @@ namespace PathCreation.Examples {
                 rightAreaColliderMeshObj.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
                 rightAreaColliderMeshObj.transform.localScale = Vector3.one;
 
-                float height = 1f;
+                float height = 10f;
                 Vector3[] verts = new Vector3[16];
                 Vector3[] normals = new Vector3[verts.Length];
 
@@ -410,6 +424,236 @@ namespace PathCreation.Examples {
             }
 
             roadHolder.RightAreaColliderObj = rightAreaColliderObj;
+        }
+
+        void CreateRailingRoad()
+        {
+            if (isLeftRailingActive)
+            {
+                AssignLeftRailingComponent();
+                CreateLeftSideRailing();
+            }
+
+            if (isRightRailingActive)
+            {
+                AssignRightRailingComponent();
+                CreateRightSideRailing();
+            }
+        }
+
+        void AssignLeftRailingComponent()
+        {
+            if (leftRailingHolder == null)
+            {
+                leftRailingHolder = new GameObject("Left Railing");
+            }
+
+            leftRailingHolder.transform.parent = meshHolder.transform;
+            leftRailingHolder.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            leftRailingHolder.transform.localScale = Vector3.one;
+
+            if (transform.parent != null)
+            {
+                leftRailingHolder.transform.parent = meshHolder.transform;
+            }
+        }
+
+        void CreateLeftSideRailing()
+        {
+            bool usePathNormals = !(path.space == PathSpace.xyz && flattenSurface);
+
+            Vector3[] verts = new Vector3[(path.NumPoints) * 6];
+
+            // get vertices
+            for (int point = 0; point < path.NumPoints; point++)
+            {
+                int startIndex = point * 6;
+
+                //Debug.Log($"{startIndex} | {verts.Length}");
+
+                Vector3 localUp = (usePathNormals) ? Vector3.Cross(path.GetTangent(point), path.GetNormal(point)) : path.up;
+                Vector3 localRight = (usePathNormals) ? path.GetNormal(point) : Vector3.Cross(localUp, path.GetTangent(point));
+
+                // Find position to center and left of current path vertex
+                Vector3 vertPoint = path.GetPoint(point);
+
+                verts[startIndex + 0] = vertPoint - localRight * (Mathf.Abs(roadWidth) - railingWidth);
+                verts[startIndex + 1] = verts[startIndex + 2] = vertPoint - localRight * (Mathf.Abs(roadWidth) - railingWidth) + localUp * railingHeight;
+                verts[startIndex + 3] = verts[startIndex + 4] = vertPoint - localRight * Mathf.Abs(roadWidth) + localUp * railingHeight;
+                verts[startIndex + 5] = vertPoint - localRight * Mathf.Abs(roadWidth);
+            }
+
+            // create triangles
+            int pointPerSegments = 50;
+            int currentPoint = 0;
+            while (currentPoint < path.NumPoints - 1)
+            {
+                int length = currentPoint + pointPerSegments > path.NumPoints - 1 ? path.NumPoints - 1 : 50;
+
+                // create gameobject to save mesh segment
+                GameObject leftRailingMeshObj = new GameObject($"Left Railing Mesh {currentPoint}");
+                leftRailingMeshObj.transform.parent = leftRailingHolder.transform;
+                leftRailingMeshObj.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                leftRailingMeshObj.transform.localScale = Vector3.one;
+
+                if (!leftRailingMeshObj.TryGetComponent(out MeshFilter filter))
+                {
+                    filter = leftRailingMeshObj.AddComponent<MeshFilter>();
+                }
+
+                if (!leftRailingMeshObj.TryGetComponent(out MeshRenderer renderer))
+                {
+                    renderer = leftRailingMeshObj.AddComponent<MeshRenderer>();
+                }
+
+                if (!leftRailingMeshObj.TryGetComponent(out MeshCollider col))
+                {
+                    col = leftRailingMeshObj.AddComponent<MeshCollider>();
+                }
+
+                Mesh leftRailingMesh = new Mesh();
+                filter.sharedMesh = leftRailingMesh;
+                col.sharedMesh = leftRailingMesh;
+
+                // assign material
+                renderer.sharedMaterial = railingMaterial;
+
+                int surfacePerSegment = 3;
+                int[] triangles = new int[length * surfacePerSegment * 6];
+                for (int p = 0; p < length; p++)
+                {
+                    int tIndex = p * surfacePerSegment * 6;
+
+                    for (int s = 0; s < surfacePerSegment; s++)
+                    {
+                        int tSegmentIndex = tIndex + (s * 6);
+                        triangles[tSegmentIndex] = (p * 6) + (s * 2);
+                        triangles[tSegmentIndex + 1] = (p * 6) + (s * 2) + 1;
+                        triangles[tSegmentIndex + 2] = (p * 6) + (s * 2) + 6;
+                        triangles[tSegmentIndex + 3] = (p * 6) + (s * 2) + 6;
+                        triangles[tSegmentIndex + 4] = (p * 6) + (s * 2) + 1;
+                        triangles[tSegmentIndex + 5] = (p * 6) + (s * 2) + 7;
+
+                        int[] debugTriangles = new ArraySegment<int>(triangles, tSegmentIndex, 6).ToArray();
+                    }
+                }
+
+                // set mesh
+                leftRailingMesh.Clear();
+                leftRailingMesh.vertices = verts;
+                leftRailingMesh.triangles = triangles;
+                leftRailingMesh.RecalculateBounds();
+                leftRailingMesh.RecalculateNormals();
+
+                currentPoint += pointPerSegments;
+            }
+        }
+
+        void AssignRightRailingComponent()
+        {
+            if (rightRailingHolder == null)
+            {
+                rightRailingHolder = new GameObject("Right Railing");
+            }
+
+            rightRailingHolder.transform.parent = meshHolder.transform;
+            rightRailingHolder.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            rightRailingHolder.transform.localScale = Vector3.one;
+
+            if (transform.parent != null)
+            {
+                rightRailingHolder.transform.parent = meshHolder.transform;
+            }
+        }
+
+        void CreateRightSideRailing()
+        {
+            bool usePathNormals = !(path.space == PathSpace.xyz && flattenSurface);
+
+            Vector3[] verts = new Vector3[(path.NumPoints) * 6];
+
+            // get vertices
+            for (int point = 0; point < path.NumPoints; point++)
+            {
+                int startIndex = point * 6;
+
+                Vector3 localUp = (usePathNormals) ? Vector3.Cross(path.GetTangent(point), path.GetNormal(point)) : path.up;
+                Vector3 localRight = (usePathNormals) ? path.GetNormal(point) : Vector3.Cross(localUp, path.GetTangent(point));
+
+                // Find position to center and left of current path vertex
+                Vector3 vertPoint = path.GetPoint(point);
+
+                verts[startIndex + 0] = vertPoint + localRight * (Mathf.Abs(roadWidth) - railingWidth);
+                verts[startIndex + 1] = verts[startIndex + 2] = vertPoint + localRight * (Mathf.Abs(roadWidth) - railingWidth) + localUp * railingHeight;
+                verts[startIndex + 3] = verts[startIndex + 4] = vertPoint + localRight * Mathf.Abs(roadWidth) + localUp * railingHeight;
+                verts[startIndex + 5] = vertPoint + localRight * Mathf.Abs(roadWidth);
+            }
+
+            // create triangles
+            int pointPerSegments = 50;
+            int currentPoint = 0;
+            while (currentPoint < path.NumPoints - 1)
+            {
+                int length = currentPoint + pointPerSegments > path.NumPoints - 1 ? path.NumPoints - 1 : 50;
+
+                // create gameobject to save mesh segment
+                GameObject rightRailingMeshObj = new GameObject($"Right Railing Mesh {currentPoint}");
+                rightRailingMeshObj.transform.parent = rightRailingHolder.transform;
+                rightRailingMeshObj.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                rightRailingMeshObj.transform.localScale = Vector3.one;
+
+                if (!rightRailingMeshObj.TryGetComponent(out MeshFilter filter))
+                {
+                    filter = rightRailingMeshObj.AddComponent<MeshFilter>();
+                }
+
+                if (!rightRailingMeshObj.TryGetComponent(out MeshRenderer renderer))
+                {
+                    renderer = rightRailingMeshObj.AddComponent<MeshRenderer>();
+                }
+
+                if (!rightRailingMeshObj.TryGetComponent(out MeshCollider col))
+                {
+                    col = rightRailingMeshObj.AddComponent<MeshCollider>();
+                }
+
+                Mesh rightRailingMesh = new Mesh();
+                filter.sharedMesh = rightRailingMesh;
+
+                // assign material
+                renderer.sharedMaterial = railingMaterial;
+
+                int surfacePerSegment = 3;
+                int[] triangles = new int[length * surfacePerSegment * 6];
+                for (int p = 0; p < length; p++)
+                {
+                    int tIndex = p * surfacePerSegment * 6;
+
+                    for (int s = 0; s < surfacePerSegment; s++)
+                    {
+                        int tSegmentIndex = tIndex + (s * 6);
+
+                        triangles[tSegmentIndex] = (p * 6) + (s * 2);
+                        triangles[tSegmentIndex + 1] = (p * 6) + (s * 2) + 6;
+                        triangles[tSegmentIndex + 2] = (p * 6) + (s * 2) + 1;
+                        triangles[tSegmentIndex + 3] = (p * 6) + (s * 2) + 1;
+                        triangles[tSegmentIndex + 4] = (p * 6) + (s * 2) + 6;
+                        triangles[tSegmentIndex + 5] = (p * 6) + (s * 2) + 7;
+                    }
+                }
+
+                // set mesh
+                rightRailingMesh.Clear();
+                rightRailingMesh.vertices = verts;
+                rightRailingMesh.triangles = triangles;
+                rightRailingMesh.RecalculateBounds();
+                rightRailingMesh.RecalculateNormals();
+
+                currentPoint += pointPerSegments;
+
+                col.sharedMesh = null;
+                col.sharedMesh = rightRailingMesh;
+            }
         }
 
         // Add MeshRenderer and MeshFilter components to this gameobject if not already attached
@@ -517,21 +761,5 @@ namespace PathCreation.Examples {
                 }
             }
         }
-
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            if (pathCreator == null) return;
-            if (pathCreator.path.NumPoints < 2) return;
-
-            for (int i = 0; i < pathCreator.path.NumPoints; i++)
-            {
-                Vector3 point0 = pathCreator.path.GetPoint(i);
-
-                Gizmos.color = new Color(0, 1, 0, 0.4f);
-                Gizmos.DrawLine(point0, point0 + (Vector3.up * 2f));
-            }
-        }
-#endif
     }
 }

@@ -139,10 +139,10 @@ MonoBehaviour:
   initialRoadLength: 20
   stopType: 0
   trafficLightManager: {fileID: 7152226568084789394}
-  trafficLightB: {fileID: 2706944754377836150}
-  trafficLightF: {fileID: 1020748447931284158}
-  trafficLightR: {fileID: 8193492019904588968}
-  trafficLightL: {fileID: 280396853777727144}
+  trafficLightB: {fileID: 8193492019904588968}
+  trafficLightF: {fileID: 280396853777727144}
+  trafficLightR: {fileID: 1020748447931284158}
+  trafficLightL: {fileID: 2706944754377836150}
   stopSigns:
   - {fileID: 8383474734211834971}
   - {fileID: 5863965009741000246}

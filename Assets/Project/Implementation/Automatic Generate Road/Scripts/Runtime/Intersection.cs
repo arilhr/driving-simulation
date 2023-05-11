@@ -82,23 +82,27 @@ public class Intersection : MonoBehaviour
         List<TrafficLight> trafficLightActive = new List<TrafficLight>();
 
         trafficLightB.gameObject.SetActive(true);
+        trafficLightB.Initialize(10f / roadWidth);
         trafficLightActive.Add(trafficLightB);
 
         if (f)
         {
             trafficLightF.gameObject.SetActive(true);
+            trafficLightF.Initialize(10f / roadWidth);
             trafficLightActive.Add(trafficLightF);
         }
 
         if (r)
         {
             trafficLightR.gameObject.SetActive(true);
+            trafficLightR.Initialize(10f / roadWidth);
             trafficLightActive.Add(trafficLightR);
         }
 
         if (l)
         {
             trafficLightL.gameObject.SetActive(true);
+            trafficLightL.Initialize(10f / roadWidth);
             trafficLightActive.Add(trafficLightL);
         }
 

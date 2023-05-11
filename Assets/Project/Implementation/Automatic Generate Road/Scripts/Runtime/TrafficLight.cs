@@ -9,11 +9,31 @@ public enum TrafficLightMode
 
 public class TrafficLight : MonoBehaviour
 {
+    [Header("3D Object")]
+    public GameObject verticalPole;
+    public GameObject horizontalPole;
+    public GameObject lightObj;
+
     [Header("References")]
     [SerializeField] private MeshRenderer lightRenderer;
 
-    private string PLAYER_LAYER_NAME = "Player";
+    private const string PLAYER_LAYER_NAME = "Player";
     private bool isGreen = false;
+
+    public void Initialize(float scale)
+    {
+        verticalPole.transform.localScale *= scale;
+        horizontalPole.transform.localScale = new Vector3(
+            horizontalPole.transform.localScale.x * scale, 
+            horizontalPole.transform.localScale.y * scale, 
+            1f);
+        horizontalPole.transform.localPosition = new Vector3(0, horizontalPole.transform.localPosition.y * scale, 0);
+        lightObj.transform.localScale *= scale;
+        lightObj.transform.localPosition = new Vector3(
+            lightObj.transform.localPosition.x,
+            lightObj.transform.localPosition.y * scale,
+            lightObj.transform.localPosition.z);
+    }
 
     public void ChangeLight(TrafficLightMode mode)
     {

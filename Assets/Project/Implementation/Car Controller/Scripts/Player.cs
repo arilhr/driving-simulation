@@ -9,7 +9,7 @@ namespace DrivingSimulation
         [Header("Camera")]
         public GameObject objToFollow;
 
-        private void Awake()
+        private void Start()
         {
             Initialize();
         }
@@ -23,7 +23,7 @@ namespace DrivingSimulation
         {
             if (CameraManager.Instance == null)
             {
-                Debug.LogWarning($"Camera manager is not found!");
+                Debug.Log($"Camera manager is not found!");
                 return;
             }
 
