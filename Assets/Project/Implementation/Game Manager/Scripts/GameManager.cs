@@ -1,13 +1,16 @@
 using SOGameEvents;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace DrivingSimulation
 {
     public class GameManager : Singleton<GameManager>
     {
+        [Header("UI")]
+        public GameObject gameUI;
+
         [Header("Game Events")]
+        [SerializeField]
+        private GameEventNoParam _initializeGame = null;
         [SerializeField]
         private GameEventNoParam _gameWinCallback = null;
         [SerializeField]
@@ -17,16 +20,27 @@ namespace DrivingSimulation
         [SerializeField]
         private GameEventBool _setInputActiveCallback = null;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
+            _initializeGame.AddListener(Initialize);
             _gameWinCallback.AddListener(GameWin);
             _gameLostCallback.AddListener(GameLost);
         }
 
         private void OnDestroy()
         {
+            _initializeGame.RemoveListener(Initialize);
             _gameWinCallback.RemoveListener(GameWin);
             _gameLostCallback.RemoveListener(GameLost);
+        }
+
+        private void Initialize()
+        {
+            gameUI.SetActive(true);
+
+            Debug.Log("Initialize");
         }
 
         private void GameEnd()

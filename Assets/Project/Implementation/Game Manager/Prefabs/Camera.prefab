@@ -300,3 +300,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vcam: {fileID: 2565140542330617807}
+  _initializeGame: {fileID: 11400000, guid: 398d80813252e224991c4a244328af2b, type: 2}

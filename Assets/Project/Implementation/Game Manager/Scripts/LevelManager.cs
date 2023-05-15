@@ -6,18 +6,25 @@ using UnityEngine.SceneManagement;
 
 namespace DrivingSimulation
 {
- 
     public class LevelManager : MonoBehaviour
     {
         public static LevelManager Instance;
 
-        [Header("Data")]
+
+
+        [Header("Level Training Data")]
         [SerializeField]
         private LevelData _levelDatas;
         [SerializeField]
         private int currentLevel = 0;
 
+        [Header("Level Generation")]
+        [Scene]
+        public string levelGenerationScene;
+
         [Header("Events")]
+        [SerializeField]
+        private GameEventNoParam _gotoCurrentLevel = null;
         [SerializeField]
         private GameEventNoParam _nextLevelCallback = null;
         [SerializeField]
@@ -40,6 +47,7 @@ namespace DrivingSimulation
 
             _nextLevelCallback.AddListener(NextLevel);
             _gotoLevelCallback.AddListener(GotoLevel);
+            _gotoCurrentLevel.AddListener(GotoCurrentLevel);
         }
 
         private void Start()
@@ -51,6 +59,24 @@ namespace DrivingSimulation
         {
             if (_nextLevelCallback) _nextLevelCallback.RemoveListener(NextLevel);
             if (_gotoLevelCallback) _gotoLevelCallback.RemoveListener(GotoLevel);
+            if (_gotoCurrentLevel) _gotoCurrentLevel.RemoveListener(GotoCurrentLevel);
+        }
+
+        private void GotoCurrentLevel()
+        {
+            if (_levelDatas == null)
+            {
+                Debug.Log("Level Datas is null!");
+                return;
+            }
+
+            if (_levelDatas._levelScenes.Count - 1 < currentLevel)
+            {
+                Debug.Log($"You already completed all training level! Go to a random challenge generation level.");
+
+                SceneManager.LoadScene(levelGenerationScene);
+                return;
+            }
         }
 
         private void NextLevel()
@@ -61,15 +87,9 @@ namespace DrivingSimulation
                 return;
             }
 
-            if (currentLevel >= _levelDatas._levelScenes.Count - 1)
-            {
-                Debug.Log($"Index is greater than total level list!");
-                return;
-            }
-
             currentLevel += 1;
 
-            SceneManager.LoadScene(_levelDatas._levelScenes[currentLevel].scene);
+            GotoCurrentLevel();
         }
 
         private void GotoLevel(int indexLevel)
@@ -80,15 +100,9 @@ namespace DrivingSimulation
                 return;
             }
 
-            if (indexLevel >= _levelDatas._levelScenes.Count || indexLevel < 0)
-            {
-                Debug.Log($"{indexLevel} Index is greater than total level list or lower than 0!");
-                return;
-            }
-
             currentLevel = indexLevel;
 
-            SceneManager.LoadScene(_levelDatas._levelScenes[currentLevel].scene);
+            GotoCurrentLevel();
         }
     }
 }

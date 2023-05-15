@@ -45,7 +45,7 @@ namespace DrivingSimulation
     {
         private static readonly int[] WRONG_LANE_POINT_CLASSIFICATION = { 0, 3, 5 };
         private static readonly int[] ROAD_SIZE_CLASSIFICATION = { 20, 30, 40 }; // meter
-        private static readonly int[] LONG_ROAD_CLASSIFICATION = { 1000, 1500, 2000, 3000 }; // meter
+        private static readonly int[] LONG_ROAD_CLASSIFICATION = { 700, 1000, 1500, 2000 }; // meter
         private static readonly float TURN_PER_DISTANCE_MIN = 0;
         private static readonly float TURN_PER_DISTANCE_MAX = 300;
         private static readonly float[] TOTAL_TURN_CLASSIFICATION = { 0, 5, 10, 15 }; // percentage from long road

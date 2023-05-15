@@ -6,7 +6,7 @@ public class SingletonDontDestroy<T> : MonoBehaviour where T : MonoBehaviour
 {
     public static T Instance;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         CheckSingleton();
     }

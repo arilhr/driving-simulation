@@ -8,18 +8,24 @@ public class Intersection : MonoBehaviour
 {
     public enum StopType
     {
-        None,
+        // None,
         Stop,
         TrafficLight
     }
+
+    [Header("Road Setting")]
+    public float maxVertexError = 5f;
+    public bool usingRailing = false;
+    public Material railingMaterial;
 
     [Header("Properties")]
     public PathCreator forward = null;
     public PathCreator left = null;
     public PathCreator right = null;
     public float roadWidth = 10f;
-    public float initialRoadLength = 5f;
-    public StopType stopType = StopType.None;
+    public float initialRoadLength = 20f;
+    public StopType stopType = StopType.Stop;
+
 
     [Header("Traffic Light")]
     public TrafficLightManager trafficLightManager;
@@ -77,6 +83,13 @@ public class Intersection : MonoBehaviour
         }
     }
 
+    public void InitializeRoadData(float maxVertexError, Material railingMaterial, bool usingRailing)
+    {
+        this.maxVertexError = maxVertexError;
+        this.railingMaterial = railingMaterial;
+        this.usingRailing = usingRailing;
+    }
+
     private void InitializeTrafficLight(bool f, bool r, bool l)
     {
         List<TrafficLight> trafficLightActive = new List<TrafficLight>();
@@ -131,7 +144,9 @@ public class Intersection : MonoBehaviour
         // Initialize path creator
         pathCreator.InitializeEditorData(false);
         pathCreator.EditorData.ResetBezierPath(path.transform.localPosition);
+        pathCreator.EditorData.vertexPathMaxAngleError = maxVertexError;
         BezierPath bp = pathCreator.bezierPath;
+
 
         // set path creator bezier control mode to automatic
         bp.SetPoint(0, Vector3.zero);
@@ -143,6 +158,12 @@ public class Intersection : MonoBehaviour
         roadMeshCreator.roadWidth = roadWidth;
         roadMeshCreator.pathCreator = pathCreator;
         roadMeshCreator.isRightAreaColliderActive = true;
+        if (usingRailing)
+        {
+            roadMeshCreator.isRightRailingActive = true;
+            roadMeshCreator.isLeftRailingActive = true;
+            roadMeshCreator.railingMaterial = railingMaterial;
+        }
         roadMeshCreator.flattenSurface = true;
         roadMeshCreator.TriggerUpdate();
 

@@ -22,6 +22,8 @@ namespace DrivingSimulation
 
         [Header("Events")]
         [SerializeField]
+        private GameEventNoParam _initializeGame = null;
+        [SerializeField]
         private GameEventNoParam _gameWinCallback = null;
         [SerializeField]
         private GameEventNoParam _gameLostCallback = null;
@@ -35,6 +37,7 @@ namespace DrivingSimulation
 
         private void Awake()
         {
+            _initializeGame.AddListener(Initialize);
             _gameWinCallback.AddListener(GameWin);
             _gameLostCallback.AddListener(GameLost);
             _onPointChanged.AddListener(OnPointChanged);
@@ -42,9 +45,17 @@ namespace DrivingSimulation
 
         private void OnDestroy()
         {
+            _initializeGame.RemoveListener(Initialize);
             _gameWinCallback.RemoveListener(GameWin);
             _gameLostCallback.RemoveListener(GameLost);
             _onPointChanged.RemoveListener(OnPointChanged);
+        }
+
+        private void Initialize()
+        {
+            _gamePanel.SetActive(true);
+            _gameWinPanel.SetActive(false);
+            _gameLostPanel.SetActive(false);
         }
 
         private void GameWin()

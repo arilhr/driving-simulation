@@ -178,8 +178,8 @@ namespace DrivingSimulation
 
             isRoadAlreadyGenerated = true;
 
-            roadGenerator.roadLength = _nextChallengeGenerated.LongRoad / 10f;
-            roadGenerator.roadWidth = _nextChallengeGenerated.RoadSize / 10f;
+            roadGenerator.roadLength = _nextChallengeGenerated.LongRoad;
+            roadGenerator.roadWidth = _nextChallengeGenerated.RoadSize;
             roadGenerator.turns = Mathf.RoundToInt(_nextChallengeGenerated.TotalTurn);
             roadGenerator.intersections = Mathf.RoundToInt(_nextChallengeGenerated.TotalIntersect);
 
@@ -192,8 +192,6 @@ namespace DrivingSimulation
             {
                 b.Encapsulate(rends[i].bounds);
             }
-
-            Camera.main.transform.position = new Vector3(b.center.x, 80f, b.center.z);
         }
 
         #endregion

@@ -138,6 +138,7 @@ MonoBehaviour:
   roadWidth: 10
   initialRoadLength: 20
   stopType: 0
+  usingRailing: 0
   trafficLightManager: {fileID: 7152226568084789394}
   trafficLightB: {fileID: 8193492019904588968}
   trafficLightF: {fileID: 280396853777727144}
@@ -152,6 +153,7 @@ MonoBehaviour:
   RFMaterial: {fileID: 0}
   LFMaterial: {fileID: 0}
   LRFMaterial: {fileID: 0}
+  railingMaterial: {fileID: 0}
   anchorRadius: 0.2
 --- !u!1 &6157036847648518551
 GameObject:
@@ -416,8 +418,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
       propertyPath: m_Center.x
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Center.z
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
@@ -507,8 +517,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
       propertyPath: m_Center.x
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Center.z
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
@@ -865,8 +883,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
       propertyPath: m_Center.x
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Center.z
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
@@ -956,8 +982,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
       propertyPath: m_Center.x
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500002, guid: 33a8455169e98a1418db860e3a34be61, type: 3}
+      propertyPath: m_Center.z
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33a8455169e98a1418db860e3a34be61, type: 3}

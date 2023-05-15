@@ -1845,6 +1845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objToFollow: {fileID: 1068375133}
+  _initializeGame: {fileID: 11400000, guid: 398d80813252e224991c4a244328af2b, type: 2}
 --- !u!1 &4305744416819254936
 GameObject:
   m_ObjectHideFlags: 0

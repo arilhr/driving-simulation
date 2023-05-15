@@ -513,7 +513,6 @@ namespace PathCreation.Examples {
 
                 Mesh leftRailingMesh = new Mesh();
                 filter.sharedMesh = leftRailingMesh;
-                col.sharedMesh = leftRailingMesh;
 
                 // assign material
                 renderer.sharedMaterial = railingMaterial;
@@ -546,6 +545,9 @@ namespace PathCreation.Examples {
                 leftRailingMesh.RecalculateNormals();
 
                 currentPoint += pointPerSegments;
+
+                col.sharedMesh = null;
+                col.sharedMesh = leftRailingMesh;
             }
         }
 
@@ -761,5 +763,19 @@ namespace PathCreation.Examples {
                 }
             }
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (pathCreator == null) return;
+
+            Gizmos.color = Color.red;
+
+            for (int i = 0; i < pathCreator.path.NumPoints; i++)
+            {
+                Gizmos.DrawSphere(pathCreator.path.GetPoint(i), 2f);
+            }
+        }
+#endif
     }
 }

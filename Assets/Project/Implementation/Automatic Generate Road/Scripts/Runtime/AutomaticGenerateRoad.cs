@@ -1,5 +1,6 @@
 using PathCreation;
 using PathCreation.Examples;
+using SOGameEvents;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,10 @@ namespace DrivingSimulation
         [Header("Road Input")]
         public float roadLength = 1000f;
         public float roadWidth = 10f;
+
+        [Header("Road Settings")]
+        public Material railingMaterial = null;
+        public float maxVertexError = 5f;
 
         [Header("Turn Input")]
         public int turns = 2;
@@ -42,6 +47,10 @@ namespace DrivingSimulation
         [Header("Player")]
         public Player playerPrefabs;
         public Player playerSpawned;
+
+        [Header("Events")]
+        [SerializeField] 
+        private GameEventNoParam InitializeGame = null;
 
         [Serializable]
         struct PathData
@@ -209,6 +218,7 @@ namespace DrivingSimulation
 
                     intersection.roadWidth = roadWidth;
                     Intersection.StopType intersectionType = Utils.GetRandomEnumValue<Intersection.StopType>();
+                    intersection.InitializeRoadData(maxVertexError, railingMaterial, true);
                     intersection.Initialize(true, true, true, intersectionType);
 
                     if (debug)
@@ -297,6 +307,7 @@ namespace DrivingSimulation
             roadMeshCreator.isRightAreaColliderActive = true;
             roadMeshCreator.isLeftRailingActive = true;
             roadMeshCreator.isRightRailingActive = true;
+            roadMeshCreator.railingMaterial = railingMaterial;
             roadMeshCreator.pathCreator = pathCreator;
 
             return pathCreator;
@@ -310,6 +321,7 @@ namespace DrivingSimulation
             // Initialize Path Creator
             pathCreator.InitializeEditorData(false);
             pathCreator.EditorData.ResetBezierPath(pathCreator.transform.position);
+            pathCreator.EditorData.vertexPathMaxAngleError = maxVertexError;
 
             BezierPath bp = pathCreator.bezierPath;
             List<Vector3> anchors = new();
@@ -479,6 +491,8 @@ namespace DrivingSimulation
             }
 
             playerSpawned.transform.SetPositionAndRotation(startPoint, Quaternion.identity);
+
+            InitializeGame.Invoke();
         }
 
         private void DestroyAllObject()

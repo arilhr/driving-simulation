@@ -1,3 +1,4 @@
+using DrivingSimulation;
 using UnityEngine;
 
 public enum TrafficLightMode
@@ -18,6 +19,7 @@ public class TrafficLight : MonoBehaviour
     [SerializeField] private MeshRenderer lightRenderer;
 
     private const string PLAYER_LAYER_NAME = "Player";
+    private const string CROSSING_WRONG_LIGHT_MESSAGE = "Crossing Wrong Light!";
     private bool isGreen = false;
 
     public void Initialize(float scale)
@@ -40,12 +42,14 @@ public class TrafficLight : MonoBehaviour
         if (mode == TrafficLightMode.Red)
         {
             lightRenderer.material.mainTextureOffset = new Vector2(0f, 0f);
+            isGreen = false;
             return;
         }
 
         if (mode == TrafficLightMode.Yellow)
         {
             lightRenderer.material.mainTextureOffset = new Vector2(0.334f, 0f);
+            isGreen = false;
             return;
         }
 
@@ -69,7 +73,7 @@ public class TrafficLight : MonoBehaviour
 
         float angle = Vector3.Angle(forwardDir, directionToOther);
 
-        if (angle < 90f)
+        if (angle > 90f)
         {
             if (isGreen)
             {
@@ -83,12 +87,35 @@ public class TrafficLight : MonoBehaviour
 
     private void Success()
     {
-        Debug.Log("<color=green>Success pass traffic light.</color>");
+        if (GlobalEvents.Instance != null)
+        {
+            GlobalEvents.Instance.SetNotificationCallback.Invoke("Green Light Crossing!", (int)NotificationType.Success);
+            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+
+            GlobalEvents.Instance.AddPointCallback.Invoke(20);
+        }
+
+        if (InGamePersonaDatasetManager.Instance != null)
+        {
+            InGamePersonaDatasetManager.Instance.CorrectTrafficLight();
+        }
     }
 
     private void Failed()
     {
-        Debug.Log("<color=red>Wrong traffic light.</color>");
+        if (GlobalEvents.Instance != null)
+        {
+            GlobalEvents.Instance.SetNotificationCallback.Invoke("You crossing the red light!", (int)NotificationType.Danger);
+            GlobalEvents.Instance.StartNoticationCallback.Invoke(1f, 3f, 1f);
+
+            GlobalEvents.Instance.AddPointCallback.Invoke(-20);
+            GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSSING_WRONG_LIGHT_MESSAGE, 1);
+        }
+
+        if (InGamePersonaDatasetManager.Instance != null)
+        {
+            InGamePersonaDatasetManager.Instance.WrongTrafficLight();
+        }
     }
 
 }
