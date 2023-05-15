@@ -65,15 +65,13 @@ public class TrafficLight : MonoBehaviour
     {
         if (other.gameObject.layer != LayerMask.NameToLayer(PLAYER_LAYER_NAME)) return;
 
-        Vector3 rotation = transform.localRotation.eulerAngles;
-        Quaternion offset = Quaternion.Euler(rotation.x, rotation.y + 90f, rotation.z);
-        Vector3 forwardDir = offset * transform.forward;
+        Vector3 forwardDir = 1f * transform.forward;
 
         Vector3 directionToOther = other.transform.root.position - transform.position;
 
         float angle = Vector3.Angle(forwardDir, directionToOther);
 
-        if (angle > 90f)
+        if (angle < 90f)
         {
             if (isGreen)
             {
@@ -118,4 +116,12 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * 0.5f);
+    }
+#endif
 }

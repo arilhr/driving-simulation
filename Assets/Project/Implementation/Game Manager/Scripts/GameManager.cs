@@ -5,6 +5,9 @@ namespace DrivingSimulation
 {
     public class GameManager : Singleton<GameManager>
     {
+        [Header("Properties")]
+        public bool initOnStart = false;
+
         [Header("UI")]
         public GameObject gameUI;
 
@@ -27,6 +30,12 @@ namespace DrivingSimulation
             _initializeGame.AddListener(Initialize);
             _gameWinCallback.AddListener(GameWin);
             _gameLostCallback.AddListener(GameLost);
+        }
+
+        private void Start()
+        {
+            if (initOnStart)
+                _initializeGame.Invoke();
         }
 
         private void OnDestroy()

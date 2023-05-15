@@ -8,7 +8,6 @@ using Random = UnityEngine.Random;
 
 namespace DrivingSimulation
 {
-
     public class AutomaticGenerateRoad : Singleton<AutomaticGenerateRoad>
     {
         [Header("Props")]
@@ -120,41 +119,34 @@ namespace DrivingSimulation
             {
                 int roadIndex = 0;
                 int turnsRemaining = turns;
+                float minStartLength = 100f;
                 int lastIntersectDirection = -1;
-                float latestIntersectionPoint = 0f;
-                float maxDistanceIntersection = (roadLength - (minDistanceIntersection * 2)) / intersections;
-
-                if (debug)
-                    Debug.Log($"<color=green><b>[MAX INTERSECTION DISTANCE]</b></color> {maxDistanceIntersection}");
+                float lengthRemaining = roadLength;
 
                 for (int i = 0; i < intersections; i++)
                 {
-                    float intersectionPoint = Random.Range(latestIntersectionPoint + minDistanceIntersection, latestIntersectionPoint + maxDistanceIntersection);
-
-                    if (debug)
-                        Debug.Log($"<color=green><b>[INTERSECTION POINT]</b></color> {intersectionPoint}");
-
                     // GENERATE START PATH
                     if (i == 0)
                     {
                         PathCreator firstPath = GeneratePath($"Path {roadIndex}", Vector3.zero);
 
-                        float length = intersectionPoint - latestIntersectionPoint;
-                        int turn = Random.Range(0, turnsRemaining);
+                        float startLength = minStartLength < lengthRemaining ? Random.Range(minStartLength, lengthRemaining) : minStartLength;
+                        int startTurn = Random.Range(0, turnsRemaining);
 
                         SetupPath(
-                            firstPath, 
-                            length, 
-                            turn, 
-                            GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance), 
-                            GetRandomTurnLength(turn, minTurnLength, maxTurnLength),
+                            firstPath,
+                            startLength,
+                            startTurn, 
+                            GetRandomTurnDistance(startTurn, minTurnDistance, maxTurnDistance), 
+                            GetRandomTurnLength(startTurn, minTurnLength, maxTurnLength),
                             true
                         );
 
                         if (debug)
-                            Debug.Log($"<color=green><b>[GENERATE FIRST INTERSECTION PATH]</b></color> | L: {length} | T: {turn}");
+                            Debug.Log($"<color=green><b>[GENERATE FIRST INTERSECTION PATH]</b></color> | L: {startLength} | T: {startTurn}");
 
-                        turnsRemaining -= turn;
+                        turnsRemaining -= startTurn;
+                        lengthRemaining -= startLength;
 
                         // add start path to list
                         pathDatas.Add(new PathData
@@ -162,25 +154,6 @@ namespace DrivingSimulation
                             pathCreator = firstPath,
                             roadMeshCreator = firstPath.GetComponent<RoadMeshCreator>()
                         });
-                    }
-                    else
-                    {
-                        // GENERATE NEXT PATH (AFTER INTERSECTION)
-                        PathCreator pathBefore = pathDatas[^1].pathCreator;
-
-                        float length = intersectionPoint - latestIntersectionPoint;
-                        int turn = Random.Range(0, turnsRemaining);
-                        float randomTurnDistance = GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance);
-                        float randomTurnLength = GetRandomTurnLength(turn, minTurnLength, maxTurnLength);
-
-                        float initialDegree = lastIntersectDirection == 0 ? 90f : lastIntersectDirection == 2 ? -90f : 0f;
-
-                        SetupPath(pathBefore, length, turn, randomTurnDistance, randomTurnLength, false, initialDegree);
-
-                        if (debug)
-                            Debug.Log($"<color=green><b>[SETUP PATH BEFORE {i}]</b></color> | L: {length} | T: {turn}");
-
-                        turnsRemaining -= turn;
                     }
 
                     // GENERATE INTERSECTION
@@ -210,7 +183,6 @@ namespace DrivingSimulation
                         Quaternion rotation = Quaternion.FromToRotation(intersectionObj.transform.forward, targetForward);
 
                         intersectionObj.transform.rotation = rotation;
-                        //intersectionObj.transform.eulerAngles = new Vector3(0f, intersectionObj.transform.eulerAngles.y, 0f);
                     }
 
                     if (intersectionObj.TryGetComponent(out Intersection intersection))
@@ -242,15 +214,33 @@ namespace DrivingSimulation
                     if (nextPathDirection == 2) nextPathCreator = intersection.left;
                     lastIntersectDirection = nextPathDirection;
 
+                    intersection.SetRoadEnd(nextPathDirection != 0,
+                                            nextPathDirection != 1,
+                                            nextPathDirection != 2,
+                                            barrierObject,
+                                            10f);
+
+                    // GENERATE NEXT PATH (AFTER INTERSECTION)
+                    float length = Random.Range(minDistanceIntersection, lengthRemaining > minDistanceIntersection ? lengthRemaining : minDistanceIntersection);
+                    int turn = Random.Range(0, turnsRemaining);
+                    float randomTurnDistance = GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance);
+                    float randomTurnLength = GetRandomTurnLength(turn, minTurnLength, maxTurnLength);
+
+                    Debug.Log(length);
+
+                    float initialDegree = lastIntersectDirection == 0 ? 90f : lastIntersectDirection == 2 ? -90f : 0f;
+
+                    SetupPath(nextPathCreator, length, turn, randomTurnDistance, randomTurnLength, false, initialDegree);
+
+                    if (debug)
+                        Debug.Log($"<color=green><b>[SETUP PATH BEFORE {i}]</b></color> | L: {length} | T: {turn}");
+
+                    turnsRemaining -= turn;
+                    lengthRemaining -= length;
+
                     // SETUP LAST PATH (AFTER INTERSECTION)
                     if (i == intersections - 1)
                     {
-                        float length = roadLength - latestIntersectionPoint > 0 ? roadLength - latestIntersectionPoint : 0;
-                        float randomTurnDistance = GetRandomTurnDistance(turnsRemaining, minTurnDistance, maxTurnDistance);
-                        float randomTurnLength = GetRandomTurnLength(turnsRemaining, minTurnLength, maxTurnLength);
-
-                        SetupPath(nextPathCreator, length, turnsRemaining, randomTurnDistance, randomTurnLength);
-
                         // spawn finish area
                         SpawnFinishArea(nextPathCreator);
                     }
@@ -260,8 +250,8 @@ namespace DrivingSimulation
                         pathCreator = nextPathCreator,
                         roadMeshCreator = nextPathCreator.GetComponent<RoadMeshCreator>()
                     });
+
                     intersectionDatas.Add(intersection);
-                    latestIntersectionPoint = intersectionPoint;
                 }
             }
 

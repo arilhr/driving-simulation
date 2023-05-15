@@ -5162,7 +5162,7 @@ namespace GSD.Roads{
 
                 // Add Light Manager
                 DrivingSimulation.TrafficLightManager trafficManager = tObj.AddComponent<DrivingSimulation.TrafficLightManager>();
-				trafficManager.Initialize();
+				// trafficManager.Initialize();
 
 				if(bScale){ tLanes[i].transform.localScale = tScale; }
 				
