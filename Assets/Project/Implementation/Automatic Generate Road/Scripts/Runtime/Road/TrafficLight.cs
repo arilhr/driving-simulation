@@ -22,6 +22,9 @@ public class TrafficLight : MonoBehaviour
     private const string CROSSING_WRONG_LIGHT_MESSAGE = "Crossing Wrong Light!";
     private bool isGreen = false;
 
+    // Persona
+    private const string PERSONA_KEY = "wrongTrafficLight";
+
     public void Initialize(float scale)
     {
         verticalPole.transform.localScale *= scale;
@@ -92,11 +95,6 @@ public class TrafficLight : MonoBehaviour
 
             GlobalEvents.Instance.AddPointCallback.Invoke(20);
         }
-
-        if (InGamePersonaDatasetManager.Instance != null)
-        {
-            InGamePersonaDatasetManager.Instance.CorrectTrafficLight();
-        }
     }
 
     private void Failed()
@@ -110,9 +108,9 @@ public class TrafficLight : MonoBehaviour
             GlobalEvents.Instance.AddMistakeCallback.Invoke(CROSSING_WRONG_LIGHT_MESSAGE, 1);
         }
 
-        if (InGamePersonaDatasetManager.Instance != null)
+        if (PersonaDataTracker.Instance != null)
         {
-            InGamePersonaDatasetManager.Instance.WrongTrafficLight();
+            PersonaDataTracker.Instance.Add(PERSONA_KEY);
         }
     }
 

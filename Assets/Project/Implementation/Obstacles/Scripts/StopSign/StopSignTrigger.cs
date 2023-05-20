@@ -6,6 +6,7 @@ namespace DrivingSimulation
 {
     public class StopSignTrigger : MonoBehaviour
     {
+        private const string PERSONA_KEY = "wrongStopSign";
         private const string CROSS_STOP_SIGN_MESSAGE = "Crossing Stop Sign!";
 
         private bool _playerComeFromFront = false;
@@ -67,10 +68,6 @@ namespace DrivingSimulation
                 // Points
                 GlobalEvents.Instance.AddPointCallback.Invoke(10);
             }
-
-            // Add to persona dataset
-            if (InGamePersonaDatasetManager.Instance != null)
-                InGamePersonaDatasetManager.Instance.WrongStopSign();
         }
 
         private void Failed()
@@ -92,8 +89,8 @@ namespace DrivingSimulation
 
 
             // Add to persona dataset
-            if (InGamePersonaDatasetManager.Instance != null)
-                InGamePersonaDatasetManager.Instance.WrongStopSign();
+            if (PersonaDataTracker.Instance != null)
+                PersonaDataTracker.Instance.Add(PERSONA_KEY);
         }
 
 #if UNITY_EDITOR

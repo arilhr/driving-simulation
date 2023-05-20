@@ -226,8 +226,6 @@ namespace DrivingSimulation
                     float randomTurnDistance = GetRandomTurnDistance(turn, minTurnDistance, maxTurnDistance);
                     float randomTurnLength = GetRandomTurnLength(turn, minTurnLength, maxTurnLength);
 
-                    Debug.Log(length);
-
                     float initialDegree = lastIntersectDirection == 0 ? 90f : lastIntersectDirection == 2 ? -90f : 0f;
 
                     SetupPath(nextPathCreator, length, turn, randomTurnDistance, randomTurnLength, false, initialDegree);

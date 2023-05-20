@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0740bf0961ff3f84081c690e9c5b5a82, type: 3}
+  m_Name: Difficulty Data
+  m_EditorClassIdentifier: 
+  RoadLengths:
+  - Min: 500
+    Max: 1000
+  - Min: 1000
+    Max: 1500
+  - Min: 1500
+    Max: 2000
+  RoadWidths:
+  - Min: 40
+    Max: 50
+  - Min: 30
+    Max: 40
+  - Min: 20
+    Max: 30
+  Turns:
+  - Min: 0
+    Max: 20
+  - Min: 20
+    Max: 30
+  - Min: 30
+    Max: 50

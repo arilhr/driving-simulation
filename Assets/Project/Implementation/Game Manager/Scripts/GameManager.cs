@@ -18,6 +18,8 @@ namespace DrivingSimulation
         private GameEventNoParam _gameWinCallback = null;
         [SerializeField]
         private GameEventNoParam _gameLostCallback = null;
+        [SerializeField]
+        private GameEventNoParam _gameEndCallback = null;
 
         [Header("Input Events")]
         [SerializeField]
@@ -56,10 +58,7 @@ namespace DrivingSimulation
         {
             _setInputActiveCallback.Invoke(false);
 
-            if (InGamePersonaDatasetManager.Instance != null)
-            {
-                InGamePersonaDatasetManager.Instance.OnGameEnd();
-            }
+            _gameEndCallback?.Invoke();
         }
 
         private void GameWin()
