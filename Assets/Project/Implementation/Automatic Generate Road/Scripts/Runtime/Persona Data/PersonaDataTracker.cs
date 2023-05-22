@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using SOGameEvents;
 using UnityEngine;
 
@@ -6,10 +5,18 @@ namespace DrivingSimulation
 {
     public class PersonaDataTracker : Singleton<PersonaDataTracker>
     {
-        private PersonaDataValue personaData = new PersonaDataValue();
+        private PersonaData personaData = new PersonaData();
 
         [Header("Events")]
         public GameEventNoParam OnGameEndCallback = null;
+
+        public PersonaData PersonaData
+        {
+            get
+            {
+                return personaData;
+            }
+        }
 
         protected override void Awake()
         {
@@ -23,31 +30,15 @@ namespace DrivingSimulation
             OnGameEndCallback?.RemoveListener(Save);
         }
 
-        public void Add(string key)
-        {
-            if (personaData.Value.ContainsKey(key))
-            {
-                personaData.Value[key] += 1;
-                return;
-            }
-
-            personaData.Value.Add(key, 1);
-        }
-
         public void Save()
         {
-
-            string jsonPersona = JsonConvert.SerializeObject(personaData.Value);
-
-            Debug.Log(jsonPersona);
-
-            if (PersonaDataManager.Instance == null)
+            if (ChallengeDataManager.Instance == null)
             {
-                Debug.Log($"Persona data manager is not found!");
+                Debug.Log($"Challenge data manager is not found!");
                 return;
             }
 
-            PersonaDataManager.Instance.AddLatestData(personaData);
+            ChallengeDataManager.Instance.AddPersonaData(personaData);
         }
     }
 }

@@ -15,7 +15,6 @@ namespace DrivingSimulation
         private float _currentViolatedTime = 0f;
 
         private string wrongMessage = "Wrong Lane!";
-        private const string PERSONA_KEY = "wrongLane";
 
         private void Awake()
         {
@@ -83,7 +82,7 @@ namespace DrivingSimulation
 
             if (PersonaDataTracker.Instance != null)
             {
-                PersonaDataTracker.Instance.Add(PERSONA_KEY);
+                PersonaDataTracker.Instance.PersonaData.WrongLane++;
             }
         }
     }

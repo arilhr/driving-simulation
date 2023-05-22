@@ -4,6 +4,7 @@ using System.Reflection;
 using DrivingSimulation;
 using JetBrains.Annotations;
 using PathCreation.Utility;
+using Sirenix.OdinInspector;
 using TreeEditor;
 using UnityEngine;
 
@@ -40,6 +41,13 @@ namespace PathCreation.Examples {
         MeshFilter meshFilter;
         MeshRenderer meshRenderer;
         Mesh mesh;
+
+        [BoxGroup("Debug")]
+        public bool IsHideGizmos = false;
+
+        [BoxGroup("Debug")]
+        [DisableIf("IsShowGizmos")]
+        public float gizmosSize = 1f;
 
         public GameObject MeshHolder
         {
@@ -767,6 +775,8 @@ namespace PathCreation.Examples {
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            if (IsHideGizmos) return;
+
             if (pathCreator == null) return;
 
             Gizmos.color = Color.red;

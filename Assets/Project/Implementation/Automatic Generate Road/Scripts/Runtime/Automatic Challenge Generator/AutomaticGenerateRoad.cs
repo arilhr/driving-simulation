@@ -498,6 +498,12 @@ namespace DrivingSimulation
                 // Destroy the child object
                 DestroyImmediate(child.gameObject);
             }
+
+            if (playerSpawned != null)
+            {
+                DestroyImmediate(playerSpawned.gameObject);
+                playerSpawned = null;
+            }
         }
 
     #if UNITY_EDITOR

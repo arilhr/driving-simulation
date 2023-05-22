@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3165571393948956339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3165571393948956341}
+  - component: {fileID: 3165571393948956340}
+  m_Layer: 0
+  m_Name: Challenge Area Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3165571393948956341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165571393948956339}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3165571393948956340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165571393948956339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dcddeeca8ac18f4282788958809b882, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generateOnAwake: 0
+  roadLength: 500
+  roadWidth: 20
+  railingMaterial: {fileID: 2100000, guid: 4a8430d8c549a9e48944f14ce52ffc14, type: 2}
+  maxVertexError: 5
+  turns: 5
+  minTurnDistance: 0
+  maxTurnDistance: 50
+  minTurnLength: 50
+  maxTurnLength: 100
+  minTurnDegree: 30
+  maxTurnDegree: 45
+  IntersectionPrefab: {fileID: 6157036847142781980, guid: 2ff9207dfb632f34ebf6c99c356536f0, type: 3}
+  intersections: 0
+  minDistanceIntersection: 100
+  startPoint: {x: -5, y: 0, z: 50}
+  endPoint: {x: 0, y: 0, z: 0}
+  barrierObject: {fileID: 5876177654237098415, guid: 3c4322b23f006154e9a61af522c6fdf1, type: 3}
+  finishAreaObj: {fileID: 6800360449281822453, guid: 4b021c4bcfc251d42979bd117bc3c052, type: 3}
+  playerPrefabs: {fileID: 8413212167939689133, guid: 8c4b0cc77fe06dd47a586ec3e033fcb0, type: 3}
+  playerSpawned: {fileID: 0}
+  InitializeGame: {fileID: 11400000, guid: 398d80813252e224991c4a244328af2b, type: 2}
+  debug: 0
+  pathDatas:
+  - pathCreator: {fileID: 0}
+    roadMeshCreator: {fileID: 0}
+  intersectionDatas: []

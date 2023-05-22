@@ -35,4 +35,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 9.unity
     guid: 69b9c5d50902bd243873f525e81cb4ff
+  - enabled: 1
+    path: Assets/Project/Implementation/Track/Scene/New Training/Training 1.unity
+    guid: 2e5a3f892e58e044ca5ab9ff613e49fb
+  - enabled: 1
+    path: Assets/Project/Implementation/Track/Scene/New Training/Training 2.unity
+    guid: a859a084f55cfd14280815938ab11c1e
+  - enabled: 1
+    path: Assets/Project/Implementation/Track/Scene/New Training/Training 3.unity
+    guid: b33a948c53de9504d9581d6131babf6d
+  - enabled: 1
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Challenge
+      Generator Scene.unity
+    guid: 4f6ec1544908e4541b66c1be166ffb16
   m_configObjects: {}

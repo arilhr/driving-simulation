@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace DrivingSimulation
@@ -23,6 +22,11 @@ namespace DrivingSimulation
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void Update()
+        {
+            
         }
     }
 }

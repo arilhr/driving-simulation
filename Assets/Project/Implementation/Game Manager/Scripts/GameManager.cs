@@ -20,6 +20,8 @@ namespace DrivingSimulation
         private GameEventNoParam _gameLostCallback = null;
         [SerializeField]
         private GameEventNoParam _gameEndCallback = null;
+        [SerializeField]
+        private GameEventInt _addLevelCallback = null;
 
         [Header("Input Events")]
         [SerializeField]
@@ -59,6 +61,8 @@ namespace DrivingSimulation
             _setInputActiveCallback.Invoke(false);
 
             _gameEndCallback?.Invoke();
+
+            _addLevelCallback?.Invoke(1);
         }
 
         private void GameWin()

@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace DrivingSimulation
 {
-
     [Serializable]
     public struct SceneData
     {
@@ -16,7 +15,7 @@ namespace DrivingSimulation
     [CreateAssetMenu(fileName = "Level Data", menuName = "Level")]
     public class LevelData : ScriptableObject
     {
-        public List<SceneData> _levelScenes;
+        public List<SceneData> Levels;
     }
 
 }

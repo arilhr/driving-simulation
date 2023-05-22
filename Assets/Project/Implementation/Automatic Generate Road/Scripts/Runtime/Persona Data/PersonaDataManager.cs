@@ -1,7 +1,5 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-
 
 namespace DrivingSimulation
 {
@@ -10,22 +8,48 @@ namespace DrivingSimulation
         public Dictionary<string, int> Value = new Dictionary<string, int>();
     }
 
+    [Serializable]
+    public class PersonaData
+    {
+        public float WrongLane = 0;
+        public float Crash = 0;
+        public float WrongIndicator = 0;
+        public float CorrectIndicator = 0;
+        public float WrongStopSign = 0;
+        public float WrongTrafficLight = 0;
+        public float ViolateSpeedLimit = 0;
+
+        public PersonaData Average(PersonaData persona2)
+        {
+            PersonaData result = new PersonaData();
+
+            result.WrongLane = (WrongLane + persona2.WrongLane) / 2f;
+            result.Crash = (Crash + persona2.Crash) / 2f;
+            result.WrongIndicator = (WrongIndicator + persona2.WrongIndicator) / 2f;
+            result.CorrectIndicator = (CorrectIndicator + persona2.CorrectIndicator) / 2f;
+            result.WrongStopSign = (WrongStopSign + persona2.WrongStopSign) / 2f;
+            result.WrongTrafficLight = (WrongTrafficLight + persona2.WrongTrafficLight) / 2f;
+            result.ViolateSpeedLimit = (ViolateSpeedLimit + persona2.ViolateSpeedLimit) / 2f;
+
+            return result;
+        }
+    }
+
     public class PersonaDataManager : SingletonDontDestroy<PersonaDataManager>
     {
         #region Variables
 
         private const string PERSONA_DATA_FILE_NAME = "persona-data.json";
 
-        public PersonaDataKey personaDataKey;
         public int maxRecordedData = 5;
 
-        private List<PersonaDataValue> personaDataValueLists = new List<PersonaDataValue>();
+        private List<PersonaData> personaDataValueLists = new List<PersonaData>();
 
         #endregion
 
         #region Method
 
-        public void AddLatestData(PersonaDataValue newValue)
+        public void AddLatestData(PersonaData newValue)
         {
             personaDataValueLists.Add(newValue);
 
@@ -35,13 +59,19 @@ namespace DrivingSimulation
             }
         }
 
-        public PersonaDataValue AveragePersonaData()
+        public PersonaData AverageAll()
         {
-            PersonaDataValue avg = new PersonaDataValue();
+            PersonaData avg = new PersonaData();
 
-            foreach (PersonaDataValue value in personaDataValueLists)
+            for (int i = 0; i < personaDataValueLists.Count; i++)
             {
-                avg = AddTwoPersona(avg, value);
+                if (i == 0)
+                {
+                    avg = personaDataValueLists[0];
+                    continue;
+                }
+
+                avg = avg.Average(personaDataValueLists[i]);
             }
 
             return avg;
@@ -57,41 +87,11 @@ namespace DrivingSimulation
 
         }
 
-        private PersonaDataValue NewPersonaData()
+        private PersonaData NewPersonaData()
         {
-            PersonaDataValue newPersona = new PersonaDataValue();
-
-            foreach (string key in personaDataKey.Keys)
-            {
-                newPersona.Value.Add(key, 0);
-            }
+            PersonaData newPersona = new PersonaData();
 
             return newPersona;
-        }
-
-        private PersonaDataValue AddTwoPersona(PersonaDataValue persona1, PersonaDataValue persona2)
-        {
-            PersonaDataValue result = new PersonaDataValue();
-
-            foreach (string key in personaDataKey.Keys)
-            {
-                int value1 = 0;
-                int value2 = 0;
-
-                if (persona1.Value.ContainsKey(key))
-                {
-                    value1 = persona1.Value[key];
-                }
-
-                if (persona2.Value.ContainsKey(key))
-                {
-                    value2 = persona2.Value[key];
-                }
-
-                result.Value.Add(key, value1 + value2 / 2);
-            }
-
-            return result;
         }
 
         #endregion

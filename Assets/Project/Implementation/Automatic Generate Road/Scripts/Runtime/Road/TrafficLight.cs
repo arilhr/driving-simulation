@@ -22,9 +22,6 @@ public class TrafficLight : MonoBehaviour
     private const string CROSSING_WRONG_LIGHT_MESSAGE = "Crossing Wrong Light!";
     private bool isGreen = false;
 
-    // Persona
-    private const string PERSONA_KEY = "wrongTrafficLight";
-
     public void Initialize(float scale)
     {
         verticalPole.transform.localScale *= scale;
@@ -110,7 +107,7 @@ public class TrafficLight : MonoBehaviour
 
         if (PersonaDataTracker.Instance != null)
         {
-            PersonaDataTracker.Instance.Add(PERSONA_KEY);
+            PersonaDataTracker.Instance.PersonaData.WrongTrafficLight++;
         }
     }
 
