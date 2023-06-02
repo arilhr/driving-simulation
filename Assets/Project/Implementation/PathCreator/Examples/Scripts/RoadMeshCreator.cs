@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using DrivingSimulation;
-using JetBrains.Annotations;
-using PathCreation.Utility;
 using Sirenix.OdinInspector;
-using TreeEditor;
 using UnityEngine;
 
 
@@ -33,6 +28,7 @@ namespace PathCreation.Examples {
         private GameObject rightRailingHolder;
 
         [Header("Additional Settings")]
+        public string layerName = "Road";
         public bool isLeftAreaColliderActive = false;
         public bool isRightAreaColliderActive = false;
 
@@ -671,6 +667,7 @@ namespace PathCreation.Examples {
 
             if (meshHolder == null) {
                 meshHolder = new GameObject ("Road Mesh Holder");
+                meshHolder.layer = LayerMask.NameToLayer(layerName);
                 meshHolder.AddComponent<Road>();
             }
 

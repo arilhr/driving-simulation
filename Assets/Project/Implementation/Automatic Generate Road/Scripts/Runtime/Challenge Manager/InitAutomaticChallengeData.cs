@@ -75,6 +75,12 @@ namespace DrivingSimulation
             AutomaticGenerateRoad.Instance.turns = turns;
 
             AutomaticGenerateRoad.Instance.GenerateRoad();
+
+            if (PersonaDataTracker.Instance == null)
+            {
+                GameObject personaDataTrackerObj = new GameObject("Persona Data Tracker");
+                personaDataTrackerObj.AddComponent<PersonaDataTracker>();
+            }
         }
 
         private void Save()
@@ -85,6 +91,12 @@ namespace DrivingSimulation
                 return;
             }
 
+            // calculate next difficulty
+            PersonaData currentPersona = PersonaDataTracker.Instance.PersonaData;
+            ChallengeDataManager.Instance.CalculateDifficulty(challenge, currentPersona);
+
+            // save current persona and challenge
+            PersonaDataTracker.Instance.Save();
             ChallengeDataManager.Instance.AddDifficultyData(difficulty, challenge);
         }
 

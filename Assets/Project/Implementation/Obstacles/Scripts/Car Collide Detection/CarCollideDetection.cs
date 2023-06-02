@@ -35,9 +35,9 @@ namespace DrivingSimulation
                 GlobalEvents.Instance.AddMistakeCallback.Invoke(CAR_CRASH_KEY, 1);
             }
 
-            if (InGamePersonaDatasetManager.Instance != null)
+            if (PersonaDataTracker.Instance != null)
             {
-                InGamePersonaDatasetManager.Instance.Crash();
+                PersonaDataTracker.Instance.PersonaData.Crash++;
             }
 
             StartCoroutine(DelayActivate());

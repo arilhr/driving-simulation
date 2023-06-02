@@ -6,44 +6,28 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Project/Implementation/Main Menu/Scenes/Main Menu.unity
-    guid: 1ea1727825dc5a144be54ae3010ae561
+    path: Assets/Project/Implementation/Main Menu/Scenes/Main Menu - New.unity
+    guid: 47d8c1aece494e24bac9b843334eba20
   - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 1.unity
-    guid: 3e5d7f82a0a1fd740b8b06f487af7802
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 2.unity
-    guid: addfcb749f3ff494e83742a6790cb879
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 3.unity
-    guid: 31a7bb9d1f9b72147a58540d12a1fb60
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 4.unity
-    guid: 6ec113ae92ae604458314404cd05f963
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 5.unity
-    guid: da6e4437d56f4bc4b9265c48776f6d2a
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 6.unity
-    guid: 4a3ce479e591d0a4585541651f2f6c61
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 7.unity
-    guid: 8be70071f25c51b44a88c43152657079
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 8.unity
-    guid: d094d45a1df7d3845927601dfbe98d5c
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/Traffic Level/Track Level 9.unity
-    guid: 69b9c5d50902bd243873f525e81cb4ff
-  - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/New Training/Training 1.unity
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Training Level/Training
+      1.unity
     guid: 2e5a3f892e58e044ca5ab9ff613e49fb
   - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/New Training/Training 2.unity
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Training Level/Training
+      2.unity
     guid: a859a084f55cfd14280815938ab11c1e
   - enabled: 1
-    path: Assets/Project/Implementation/Track/Scene/New Training/Training 3.unity
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Training Level/Training
+      3.unity
     guid: b33a948c53de9504d9581d6131babf6d
+  - enabled: 1
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Training Level/Training
+      4.unity
+    guid: 89cb76fb6b34c5c46a09c8965bd9814a
+  - enabled: 1
+    path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Training Level/Training
+      5.unity
+    guid: 9b288d4f4f7f4434b8dcd19ecd2b6dad
   - enabled: 1
     path: Assets/Project/Implementation/Automatic Generate Road/Scenes/Challenge
       Generator Scene.unity

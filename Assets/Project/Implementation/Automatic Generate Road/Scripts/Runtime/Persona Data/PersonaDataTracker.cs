@@ -22,12 +22,12 @@ namespace DrivingSimulation
         {
             base.Awake();
 
-            OnGameEndCallback?.AddListener(Save);
+            // OnGameEndCallback?.AddListener(Save);
         }
 
         private void OnDestroy()
         {
-            OnGameEndCallback?.RemoveListener(Save);
+            // OnGameEndCallback?.RemoveListener(Save);
         }
 
         public void Save()

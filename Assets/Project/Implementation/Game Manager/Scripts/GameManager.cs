@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using SOGameEvents;
 using UnityEngine;
 
@@ -27,6 +28,9 @@ namespace DrivingSimulation
         [SerializeField]
         private GameEventBool _setInputActiveCallback = null;
 
+        [BoxGroup("Debug")]
+        [SerializeField, ReadOnly] private bool isEnded = false;
+
         protected override void Awake()
         {
             base.Awake();
@@ -51,18 +55,23 @@ namespace DrivingSimulation
 
         private void Initialize()
         {
+            isEnded = false;
             gameUI.SetActive(true);
 
-            Debug.Log("Initialize");
+            Debug.Log("Game Starting!");
         }
 
         private void GameEnd()
         {
+            if (isEnded) return;
+
             _setInputActiveCallback.Invoke(false);
 
             _gameEndCallback?.Invoke();
 
             _addLevelCallback?.Invoke(1);
+
+            isEnded = true;
         }
 
         private void GameWin()

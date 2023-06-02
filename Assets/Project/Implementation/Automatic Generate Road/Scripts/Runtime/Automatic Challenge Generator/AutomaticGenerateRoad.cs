@@ -20,6 +20,7 @@ namespace DrivingSimulation
         [Header("Road Settings")]
         public Material railingMaterial = null;
         public float maxVertexError = 5f;
+        public string roadLayer;
 
         [Header("Turn Input")]
         public int turns = 2;
@@ -167,6 +168,7 @@ namespace DrivingSimulation
                         Quaternion.identity
                     );
                     intersectionObj.name = $"Intersection {i}";
+                    intersectionObj.layer = LayerMask.NameToLayer(roadLayer);
                     intersectionObj.transform.parent = transform;
                     intersectionObj.transform.localScale = new Vector3(roadWidth, roadWidth, roadWidth);
 
@@ -297,6 +299,7 @@ namespace DrivingSimulation
             roadMeshCreator.isRightRailingActive = true;
             roadMeshCreator.railingMaterial = railingMaterial;
             roadMeshCreator.pathCreator = pathCreator;
+            roadMeshCreator.layerName = roadLayer;
 
             return pathCreator;
         }

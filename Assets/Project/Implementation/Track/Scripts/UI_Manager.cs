@@ -1,6 +1,4 @@
 using SOGameEvents;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +16,11 @@ namespace DrivingSimulation
         [SerializeField]
         private TMP_Text _pointText;
         [SerializeField]
-        private GameObject _gameLostPanel;
+        private UI_MistakeItem _mistakeItemPrefab;
+        [SerializeField]
+        private Transform _mistakeItemParent;
+        [Scene]
+        public string mainMenuScene;
 
         [Header("Events")]
         [SerializeField]
@@ -26,9 +28,7 @@ namespace DrivingSimulation
         [SerializeField]
         private GameEventNoParam _gameWinCallback = null;
         [SerializeField]
-        private GameEventNoParam _gameLostCallback = null;
-        [SerializeField]
-        private GameEventNoParam _nextLevelCallback = null;
+        private GameEventNoParam _gotoLevelCallback = null;
         [SerializeField]
         private GameEventInt _onPointChanged = null;
 
@@ -39,7 +39,6 @@ namespace DrivingSimulation
         {
             _initializeGame.AddListener(Initialize);
             _gameWinCallback.AddListener(GameWin);
-            _gameLostCallback.AddListener(GameLost);
             _onPointChanged.AddListener(OnPointChanged);
         }
 
@@ -47,7 +46,6 @@ namespace DrivingSimulation
         {
             _initializeGame.RemoveListener(Initialize);
             _gameWinCallback.RemoveListener(GameWin);
-            _gameLostCallback.RemoveListener(GameLost);
             _onPointChanged.RemoveListener(OnPointChanged);
         }
 
@@ -55,25 +53,53 @@ namespace DrivingSimulation
         {
             _gamePanel.SetActive(true);
             _gameWinPanel.SetActive(false);
-            _gameLostPanel.SetActive(false);
         }
 
         private void GameWin()
         {
-            _pointText.text = "Point: " + _currentPoint.ToString();
+            _pointText.text = _currentPoint.ToString();
             _gamePanel.SetActive(false);
             _gameWinPanel.SetActive(true);
+
+            // instantiate all mistake
+            InstantiatePersonaList();
         }
 
-        private void GameLost()
+        private void InstantiatePersonaList()
         {
-            _gamePanel.SetActive(false);
-            _gameLostPanel.SetActive(true);
+            if (PersonaDataTracker.Instance == null)
+                return;
+
+            PersonaData persona = PersonaDataTracker.Instance.PersonaData;
+
+            if (persona.WrongLane > 0)
+            {
+                UI_MistakeItem wrongLaneUI = Instantiate(_mistakeItemPrefab, _mistakeItemParent);
+                wrongLaneUI.SetText("Wrong Lane", (int)persona.WrongLane);
+            }
+
+            if (persona.Crash > 0)
+            {
+                UI_MistakeItem crashUI = Instantiate(_mistakeItemPrefab, _mistakeItemParent);
+                crashUI.SetText("Crash", (int)persona.Crash);
+            }
+
+            if (persona.WrongIndicator > 0)
+            {
+                UI_MistakeItem indicatorUI = Instantiate(_mistakeItemPrefab, _mistakeItemParent);
+                indicatorUI.SetText("Wrong Indicator", (int)persona.WrongIndicator);
+            }
+
+            if (persona.ViolateSpeedLimit > 0)
+            {
+                UI_MistakeItem speedLimitUI = Instantiate(_mistakeItemPrefab, _mistakeItemParent);
+                speedLimitUI.SetText("Violate Speed Limit", (int)persona.ViolateSpeedLimit);
+            }
         }
 
         public void NextLevel()
         {
-            _nextLevelCallback.Invoke();
+            _gotoLevelCallback?.Invoke();
         }
 
         public void RetryLevel()
@@ -83,7 +109,7 @@ namespace DrivingSimulation
 
         public void BackMenu()
         {
-            SceneManager.LoadScene("Main Menu");
+            SceneManager.LoadScene(mainMenuScene);
         }
 
         private void OnPointChanged(int point)

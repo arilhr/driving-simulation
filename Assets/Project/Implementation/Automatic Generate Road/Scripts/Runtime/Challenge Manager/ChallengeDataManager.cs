@@ -7,19 +7,14 @@ using Sirenix.OdinInspector;
 namespace DrivingSimulation
 {
     [Serializable]
-    public class LevelDifficulty
-    {
-        public int RoadLength;
-        public int RoadWidth;
-        public int Turn;
-    }
-
-    [Serializable]
     public class ChallengeData
     {
-        public float RoadLength;
-        public float RoadWidth;
-        public float Turn;
+        public float RoadLength = 0;
+        public float RoadWidth = 0;
+        public float Turn = 0;
+        public float Intersection = 0;
+        public float StopSignPercentage = 0;
+        public float TrafficLightPercentage = 0;
 
         public ChallengeData Average(ChallengeData data2)
         {
@@ -28,47 +23,76 @@ namespace DrivingSimulation
             avg.RoadLength = (RoadLength + data2.RoadLength) / 2f;
             avg.RoadWidth = (RoadWidth + data2.RoadWidth) / 2f;
             avg.Turn = (Turn + data2.Turn) / 2f;
+            avg.Intersection = (Intersection + data2.Intersection) / 2f;
+            avg.StopSignPercentage = (StopSignPercentage + data2.StopSignPercentage) / 2f;
+            avg.TrafficLightPercentage = (TrafficLightPercentage + data2.TrafficLightPercentage) / 2f;
 
             return avg;
         }
     }
 
-    public class ChallengeDataManager : Singleton<ChallengeDataManager>
+    [Serializable]
+    public struct Difficulty
     {
-        [Header("Difficulty Data List")]
+        public int Lane;
+        public int Intersection;
+    }
+
+    public class ChallengeDataManager : SingletonDontDestroy<ChallengeDataManager>
+    {
+
+        [BoxGroup("Difficulty Data Settings")]
         public DifficultyData difficulties;
-
-        [Header("Current Difficulty")]
-        [SerializeField] private int laneDifficulty = 0;
-        [SerializeField] private int intersectionDifficulty = 0;
-
-        [Header("Settings")]
+        [BoxGroup("Difficulty Data Settings")]
         [SerializeField] private int maxRecordedData = 5;
+        [BoxGroup("Difficulty Data Settings")]
+        [SerializeField] private Difficulty currentDifficulty;
 
-        [Space(10f)]
+        [BoxGroup("Calculate Settings")]
+        [SerializeField] private float distancePerWrongLane = 500f;
+        [BoxGroup("Calculate Settings")]
+        [SerializeField] private float distancePerCrash = 500f;
 
-        [BoxGroup("Debug")]
+        [FoldoutGroup("Debug")]
         [SerializeField, ReadOnly]
         private List<LevelDifficulty> difficultyDatas = new List<LevelDifficulty>();
         [Space(5f)]
-        [BoxGroup("Debug")]
+        [FoldoutGroup("Debug")]
         [SerializeField, ReadOnly]
         private List<ChallengeData> challengeDatas = new List<ChallengeData>();
         [Space(5f)]
-        [BoxGroup("Debug")]
+        [FoldoutGroup("Debug")]
         [SerializeField, ReadOnly]
         private List<PersonaData> personaDatas = new List<PersonaData>();
 
+        private const string CURRENT_DIFFICULTY_DATA_KEY = "CurrentDifficultyData";
+        private const string DIFFICULTY_DATA_KEY = "DifficultyData";
         private const string CHALLENGE_DATA_KEY = "ChallengeData";
         private const string PERSONA_DATA_KEY = "PersonaData";
+
+        #region Props
+
+        public int LaneDifficulty
+        {
+            get { return currentDifficulty.Lane; }
+            set
+            {
+                currentDifficulty.Lane = value;
+
+                if (currentDifficulty.Lane > difficulties.TotalLaneDifficulty())
+                    currentDifficulty.Lane = difficulties.TotalLaneDifficulty();
+            }
+        }
+
+        #endregion
 
         #region Mono
 
         private void OnValidate()
         {
             int maxLaneDifficulty = difficulties.RoadLengths.Count + difficulties.RoadWidths.Count + difficulties.Turns.Count;
-            if (laneDifficulty > maxLaneDifficulty)
-                laneDifficulty = maxLaneDifficulty;
+            if (currentDifficulty.Lane > maxLaneDifficulty)
+                currentDifficulty.Lane = maxLaneDifficulty;
         }
 
         protected override void Awake()
@@ -84,6 +108,12 @@ namespace DrivingSimulation
 
         private void LoadData()
         {
+            if (ES3.KeyExists(CURRENT_DIFFICULTY_DATA_KEY))
+                currentDifficulty = ES3.Load<Difficulty>(CURRENT_DIFFICULTY_DATA_KEY);
+
+            if (ES3.KeyExists(DIFFICULTY_DATA_KEY))
+                difficultyDatas = ES3.Load<List<LevelDifficulty>>(DIFFICULTY_DATA_KEY);
+
             if (ES3.KeyExists(CHALLENGE_DATA_KEY))
                 challengeDatas = ES3.Load<List<ChallengeData>>(CHALLENGE_DATA_KEY);
 
@@ -93,6 +123,8 @@ namespace DrivingSimulation
 
         private void SaveData()
         {
+            ES3.Save(CURRENT_DIFFICULTY_DATA_KEY, currentDifficulty);
+            ES3.Save(DIFFICULTY_DATA_KEY, difficultyDatas);
             ES3.Save(CHALLENGE_DATA_KEY, challengeDatas);
             ES3.Save(PERSONA_DATA_KEY, personaDatas);
         }
@@ -106,7 +138,7 @@ namespace DrivingSimulation
             LevelDifficulty result = new LevelDifficulty();
 
             // Lane Difficulty
-            int remainingLaneDiffPoint = laneDifficulty;
+            int remainingLaneDiffPoint = currentDifficulty.Lane;
             while (remainingLaneDiffPoint > 0)
             {
                 // 0: road length, 1: road width, 2: turns
@@ -211,24 +243,38 @@ namespace DrivingSimulation
             ChallengeData avgChallengeData = AverageChallengeData();
 
             // LANE DIFFICULTY
+            // 0 - 30%, 30% - 60%, 60 - Max
             int laneDifficultyPoint = 0;
 
             // Wrong lane point
-            // 0 - 30%, 30% - 60%, 60 - Max
-            float distancePerWrong = 300;
-            float wrongLanePercentage = newest.WrongLane * distancePerWrong / (currentChallenge.RoadLength) * 100;
-            float wrongLaneAveragePercentage = avgPersona.WrongLane * distancePerWrong / (avgChallengeData.RoadLength) * 100;
-            if (wrongLanePercentage <= 30)
+            float wrongLanePercentage = newest.WrongLane * distancePerWrongLane / (currentChallenge.RoadLength) * 100;
+            float wrongLaneAveragePercentage = avgPersona.WrongLane * distancePerWrongLane / (avgChallengeData.RoadLength) * 100;
+            if (avgChallengeData.RoadLength == 0)
+                wrongLaneAveragePercentage = 0;
+
+            // Crash point
+            float crashPercentage = newest.Crash * distancePerCrash / (currentChallenge.RoadLength) * 100;
+            float crashAveragePercentage = avgPersona.Crash * distancePerCrash / (avgChallengeData.RoadLength) * 100;
+            if (avgChallengeData.RoadLength == 0)
+                crashAveragePercentage = 0;
+
+            // Lane Error Percentage
+            float laneErrorPercentage = (wrongLanePercentage + crashPercentage) / 2f;
+            float pastLaneErrorAveragePercentage = (wrongLaneAveragePercentage + crashAveragePercentage) / 2f;
+
+            // Increase Lane Difficulty
+            if (laneErrorPercentage <= 30)
             {
-                laneDifficultyPoint += CompareWithAverage(wrongLanePercentage, wrongLaneAveragePercentage, false);
+                laneDifficultyPoint += CompareWithAverage(laneErrorPercentage, pastLaneErrorAveragePercentage, false);
             }
 
-            if (60 < wrongLanePercentage)
+            // Decrease Lane Difficulty
+            if (60 < laneErrorPercentage)
             {
-                laneDifficultyPoint += CompareWithAverage(wrongLanePercentage, wrongLaneAveragePercentage, true);
+                laneDifficultyPoint += CompareWithAverage(laneErrorPercentage, pastLaneErrorAveragePercentage, true);
             }
 
-            // WRONG 
+            LaneDifficulty += laneDifficultyPoint;
         }
 
         private int CompareWithAverage(float percentage, float average, bool isNegative)

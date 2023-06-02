@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: Difficulty Data
   m_EditorClassIdentifier: 
   RoadLengths:
+  - Min: 300
+    Max: 500
   - Min: 500
+    Max: 750
+  - Min: 750
     Max: 1000
   - Min: 1000
     Max: 1500
@@ -21,15 +25,15 @@ MonoBehaviour:
     Max: 2000
   RoadWidths:
   - Min: 40
-    Max: 50
-  - Min: 30
     Max: 40
-  - Min: 20
+  - Min: 30
     Max: 30
+  - Min: 20
+    Max: 20
   Turns:
   - Min: 0
-    Max: 20
-  - Min: 20
+    Max: 10
+  - Min: 10
     Max: 30
   - Min: 30
-    Max: 50
+    Max: 60

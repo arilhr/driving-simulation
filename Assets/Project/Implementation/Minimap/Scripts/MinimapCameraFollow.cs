@@ -1,38 +1,75 @@
-using System.Collections;
-using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using SOGameEvents;
 using UnityEngine;
 
-public class MinimapCameraFollow : MonoBehaviour
+namespace DrivingSimulation
 {
-    [Header("Properties")]
-    [SerializeField]
-    private Transform _objectToFollow = null;
-    [SerializeField]
-    private Vector3 _offset = Vector3.zero;
-
-    private void Update()
+    public class MinimapCameraFollow : MonoBehaviour
     {
-        UpdateCameraPosition();
-        UpdateCameraRotation();
-    }
+        [BoxGroup("Properties")]
+        [SerializeField]
+        private Transform _objectToFollow = null;
+        [BoxGroup("Properties")]
+        [SerializeField]
+        private Vector3 _offset = Vector3.zero;
 
-    void UpdateCameraPosition()
-    {
-        transform.position = _objectToFollow.position + _offset;
-    }
+        [BoxGroup("Events")]
+        public GameEventNoParam InitializeGameCallback = null;
 
-    void UpdateCameraRotation()
-    {
-        Vector3 euler = new Vector3(transform.rotation.eulerAngles.x, _objectToFollow.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-        transform.rotation = Quaternion.Euler(euler);
-    }
+        #region Mono
 
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (_objectToFollow == null) return;
+        private void Awake()
+        {
+            InitializeGameCallback?.AddListener(OnInitializeGame);
+        }
 
-        UpdateCameraPosition();
+        private void Update()
+        {
+            if (_objectToFollow == null) 
+                return;
+
+            UpdateCameraPosition();
+            UpdateCameraRotation();
+        }
+
+        private void OnDestroy()
+        {
+            InitializeGameCallback?.RemoveListener(OnInitializeGame);
+        }
+
+        #endregion
+
+        #region Method
+
+        void OnInitializeGame()
+        {
+            // Find player
+            if (Player.Instance == null)
+                return;
+
+            _objectToFollow = Player.Instance.objToFollow.transform;
+        }
+
+        void UpdateCameraPosition()
+        {
+            transform.position = _objectToFollow.position + _offset;
+        }
+
+        void UpdateCameraRotation()
+        {
+            Vector3 euler = new Vector3(transform.rotation.eulerAngles.x, _objectToFollow.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+            transform.rotation = Quaternion.Euler(euler);
+        }
+
+        #endregion
+
+    #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (_objectToFollow == null) return;
+
+            UpdateCameraPosition();
+        }
+    #endif
     }
-#endif
 }

@@ -49,6 +49,7 @@ MonoBehaviour:
   roadWidth: 20
   railingMaterial: {fileID: 2100000, guid: 4a8430d8c549a9e48944f14ce52ffc14, type: 2}
   maxVertexError: 5
+  roadLayer: Road
   turns: 5
   minTurnDistance: 0
   maxTurnDistance: 50
