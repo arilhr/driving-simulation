@@ -175,6 +175,41 @@ namespace DrivingSimulation
 
     #endregion
 
+    #region Sound Class
+
+    [Serializable]
+    public class VehicleSoundsClass
+    {
+        [Range(1.5f, 6.0f)]
+        [Tooltip("This variable defines the speed of the engine sound.")]
+        public float speedOfEngineSound = 3.5f;
+        [Tooltip("The audio referring to the sound of the engine must be associated here.")]
+        public AudioClip engineSound;
+        [Space(10)]
+        [Tooltip("The sliding sounds of the vehicle must be set here.")]
+        public StandardSkiddingSoundsClassFree skiddingSound;
+        [Space(10)]
+        [Tooltip("Collision sounds should be associated with this list.")]
+        public AudioClip[] collisionSounds;
+        [Range(0.1f, 1.0f)]
+        [Tooltip("In this variable it is possible to set the volume of collision sounds of the vehicle.")]
+        public float volumeCollisionSounds = 0.5f;
+        [Space(10)]
+        [Tooltip("The sound related to a collision in the wheel must be associated with this variable.")]
+        public AudioClip wheelImpactSound;
+    }
+
+    [Serializable]
+    public class StandardSkiddingSoundsClassFree
+    {
+        [Tooltip("The default sound that will be emitted when the vehicle slides or skates.")]
+        public AudioClip standardSound;
+        [Range(0.1f, 3.0f)]
+        [Tooltip("The default volume of the skid sound.")]
+        public float standardVolume = 1.5f;
+    }
+    #endregion
+
     [RequireComponent(typeof(Rigidbody))]
     public class VehicleController : MonoBehaviour
     {
@@ -207,6 +242,9 @@ namespace DrivingSimulation
         [Tooltip("In this class, you can adjust all preferences in relation to vehicle skid marks, such as color, width, among other options.")]
         [SerializeField]
         private VehicleSkidMarks _skidMarks;
+
+        [BoxGroup("Sounds")]
+        public VehicleSoundsClass _sounds;
 
         [BoxGroup("Read Only", Order = 100f), ReadOnly]
         [SerializeField]
@@ -364,6 +402,13 @@ namespace DrivingSimulation
         private float _horizontalInput = 0f;
         private bool _brakeInput = false;
 
+        float speedLerpSound = 1;
+        float engineSoundFactor;
+        bool enableEngineSound;
+        float pitchAUD = 1;
+
+        AudioSource engineSoundAUD;
+
         #endregion
 
         #region References
@@ -441,6 +486,7 @@ namespace DrivingSimulation
 
             ChangeGearInput();
             DiscoverAverageRpm();
+            Sounds();
             UpdateWheelMeshes();
             AutomaticGears();
         }
@@ -565,6 +611,11 @@ namespace DrivingSimulation
             }
 
             _speedLerpSound = 5;
+            enableEngineSound = false;
+            if (_sounds.engineSound)
+            {
+                engineSoundAUD = GenerateAudioSource("Sound of engine", 10, 0, _sounds.engineSound, true, true, true);
+            }
 
             _lastRightForwardPositionY = _wheels.rightFrontWheel.wheelMesh.transform.localPosition.y;
             _lastLeftForwardPositionY = _wheels.leftFrontWheel.wheelMesh.transform.localPosition.y;
@@ -1355,6 +1406,55 @@ namespace DrivingSimulation
         }
         #endregion
 
-#endregion
+        #region SoundsManager
+
+        public AudioSource GenerateAudioSource(string name, float minDistance, float volume, AudioClip audioClip, bool loop, bool playNow, bool playAwake)
+        {
+            GameObject audioSource = new GameObject(name);
+            audioSource.transform.position = transform.position;
+            audioSource.transform.parent = transform;
+            AudioSource temp = audioSource.AddComponent<AudioSource>() as AudioSource;
+            temp.minDistance = minDistance;
+            temp.volume = volume;
+            temp.clip = audioClip;
+            temp.loop = loop;
+            temp.playOnAwake = playAwake;
+            temp.spatialBlend = 1.0f;
+            temp.dopplerLevel = 0.0f;
+            if (playNow)
+            {
+                temp.Play();
+            }
+            return temp;
+        }
+
+        void Sounds()
+        {
+            if (_sounds.engineSound)
+            {
+                if (_theEngineIsRunning && KMh > 1f)
+                {
+                    engineSoundAUD.volume = Mathf.Lerp(engineSoundAUD.volume, Mathf.Clamp(Mathf.Abs(_engineInput), 0.35f, 0.85f), Time.deltaTime * 5.0f);
+                    if (handBrakeTrue || CurrentGear == 0)
+                    {
+                        engineSoundAUD.pitch = Mathf.Lerp(engineSoundAUD.pitch, 0.85f + Mathf.Abs(_verticalInput) * (_sounds.speedOfEngineSound * 0.7f - 0.85f), Time.deltaTime * 5.0f);
+                    }
+                    else
+                    {
+                        engineSoundAUD.pitch = Mathf.Lerp(engineSoundAUD.pitch, pitchAUD, Time.deltaTime * speedLerpSound);
+                    }
+                }
+
+                if (Mathf.FloorToInt(KMh) == 0)
+                {
+                    engineSoundAUD.volume = 0;
+                    engineSoundAUD.pitch = 0;
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
     }
 }

@@ -1,6 +1,4 @@
 using SOGameEvents;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -54,11 +52,11 @@ namespace DrivingSimulation
         {
             if (currentLevel < levelTrainingData.Levels.Count - 1)
             {
-                SceneManager.LoadScene(levelTrainingData.Levels[currentLevel].scene);
+                SceneChanger.Instance.LoadScene(levelTrainingData.Levels[currentLevel].scene);
                 return;
             }
 
-            SceneManager.LoadScene(automaticLevelGenerateScene);
+            SceneChanger.Instance.LoadScene(automaticLevelGenerateScene);
         }
 
         public void AddLevel(int value)

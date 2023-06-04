@@ -4662,7 +4662,6 @@ MonoBehaviour:
   mainMenuScene: Main Menu - New
   _initializeGame: {fileID: 11400000, guid: 398d80813252e224991c4a244328af2b, type: 2}
   _gameWinCallback: {fileID: 11400000, guid: 1657ac7ca70635d4cb111f0faaf591f6, type: 2}
-  _addLevelCallback: {fileID: 11400000, guid: 33ecf581347ae17429674b4baaccaf34, type: 2}
   _gotoLevelCallback: {fileID: 11400000, guid: eabe5d244b8155e429310cbe39b6f336, type: 2}
   _onPointChanged: {fileID: 11400000, guid: 46f3426d90a191f4890361cbe62bd1a8, type: 2}
 --- !u!1 &5325049109924437681

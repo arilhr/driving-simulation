@@ -640,7 +640,7 @@ Light:
   m_ShadowAngle: 0
 --- !u!95 &1927535704
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -657,7 +657,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3107523180327170599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1270,7 +1271,7 @@ MonoBehaviour:
       sidewaysSkid: 0
   _vehicleTorque:
     maxVelocityKMh: 250
-    engineTorque: 20
+    engineTorque: 80
     numberOfGears: 10
     speedOfGear: 1.5
     manualAdjustmentOfTorques:
@@ -1718,6 +1719,15 @@ MonoBehaviour:
     standardBrandWidth: 0.3
     sensibility: 2
     standardColor: {r: 0.15, g: 0.15, b: 0.15, a: 0}
+  _sounds:
+    speedOfEngineSound: 3.5
+    engineSound: {fileID: 8300000, guid: 893604ce6cd13d74bb8480250646aee0, type: 3}
+    skiddingSound:
+      standardSound: {fileID: 0}
+      standardVolume: 1.5
+    collisionSounds: []
+    volumeCollisionSounds: 0.5
+    wheelImpactSound: {fileID: 0}
   _kmh: 0
   CurrentGear: 0
   disableVehicle: 0
@@ -2216,7 +2226,7 @@ Light:
   m_ShadowAngle: 0
 --- !u!95 &1240949340
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2233,7 +2243,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8670820085818488796
 GameObject:
   m_ObjectHideFlags: 0
